@@ -1,0 +1,21 @@
+# FEATURES
+- [ ] ban check (user available)
+- [ ] bot check
+-  [ ] user information
+  - [ ] broadcaster type check (affiliate/partner)
+  - [ ] uid
+  - [ ] created
+  - [ ] name (format: DisplayName (loginname))
+  - [ ] views
+  - [ ] type ("Regular" if no type is given)
+- [ ] follow
+  - [ ] followers
+  - [ ] following (only get last n follows/get all)
+  - [ ] follow relationship
+- [ ] sub age
+- [ ] currently live followed channels
+- [ ] TMI
+  - [ ] mods
+  - [ ] vips
+  - [ ] total chatter count
+  - [ ] is user in chat
