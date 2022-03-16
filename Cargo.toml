@@ -9,5 +9,8 @@ edition = "2021"
 anyhow = "1.0.56"
 clap = { version = "3.1.6", features = ["derive"] }
 colored = "2.0.0"
+confy = "0.4.0"
+dialoguer = "0.10.0"
 reqwest = "0.11.9"
-serde = "1.0.136"
+serde = { version = "1.0.136", features = ["derive"] }
+webbrowser = "0.6.0"
