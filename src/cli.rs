@@ -54,4 +54,10 @@ pub enum Action {
         follows: Option<String>,
     },
     Live,
+    Command {
+        #[clap(required(true))]
+        bot: String,
+        #[clap(required(true))]
+        cmd_name: String,
+    },
 }

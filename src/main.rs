@@ -72,6 +72,13 @@ async fn main() -> Result<()> {
                 println!("{out}");
             }
         }
+        Action::Command { bot, cmd_name } => {
+            if bot == "supi" || bot == "supibot" {
+                let uri = format!("https://supinic.com/bot/command/detail/{cmd_name}");
+                webbrowser::open(&uri)?;
+            }
+            // TODO: add more bots
+        }
         _ => {}
     }
     Ok(())
