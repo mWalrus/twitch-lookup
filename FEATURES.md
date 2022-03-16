@@ -1,5 +1,5 @@
 # FEATURES
-- [ ] SupiBot command detail link
+- [x] SupiBot command detail link
 - [ ] ban check (user available)
 - [ ] bot check
 - [ ] user information
