@@ -4,9 +4,10 @@ use clap::{Parser, Subcommand};
 #[clap(author, version, about = "A simple twitch account lookup tool", long_about = None)]
 pub struct Args {
     #[clap(subcommand)]
-    action: Action,
+    pub action: Action,
 }
 
+#[non_exhaustive]
 #[derive(Subcommand, Debug)]
 pub enum Action {
     User {
@@ -29,13 +30,17 @@ pub enum Action {
     Chat {
         #[clap(required(true))]
         channel: String,
-        #[clap(short, long, required_unless_present_any(["vips", "count", "present"]), help = "Get the moderators currently in the given chat.")]
+        #[clap(short, long, required_unless_present_any(["vips", "mods", "regular", "count", "present"]), help = "Get the moderators currently in the given chat.")]
+        broadcaster: bool,
+        #[clap(short, long, required_unless_present_any(["vips", "broadcaster", "regular", "count", "present"]), help = "Get the moderators currently in the given chat.")]
         mods: bool,
-        #[clap(short, long, required_unless_present_any(["mods", "count", "present"]), help = "Get all VIPs currently in the given chat.")]
+        #[clap(short, long, required_unless_present_any(["mods", "broadcaster", "count", "present"]), help = "Get all VIPs currently in the given chat.")]
         vips: bool,
-        #[clap(short, long, required_unless_present_any(["mods", "vips", "present"]), help = "Get the total number of chatters currently in the given chat.")]
+        #[clap(short, long, required_unless_present_any(["mods", "broadcaster", "regular", "vips", "present"]), help = "Get the total number of chatters currently in the given chat.")]
         count: bool,
-        #[clap(short, long, required_unless_present_any(["mods", "vips", "count"]), help = "Check whether a given user is present in the given chat.")]
+        #[clap(short, long, required_unless_present_any(["vips", "broadcaster", "mods", "count", "present"]), help = "Get the moderators currently in the given chat.")]
+        regular: bool,
+        #[clap(short, long, required_unless_present_any(["mods", "broadcaster", "regular", "vips", "count"]), help = "Check whether a given user is present in the given chat.")]
         present: Option<String>,
     },
     Follow {

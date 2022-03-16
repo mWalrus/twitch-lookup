@@ -1,4 +1,5 @@
 # FEATURES
+- [ ] SupiBot command detail link
 - [ ] ban check (user available)
 - [ ] bot check
 -  [ ] user information
@@ -14,8 +15,9 @@
   - [ ] follow relationship
 - [ ] sub age
 - [ ] currently live followed channels
-- [ ] TMI
-  - [ ] mods
-  - [ ] vips
-  - [ ] total chatter count
-  - [ ] is user in chat
+- [x] TMI
+  - [x] regular viewers
+  - [x] mods
+  - [x] vips
+  - [x] total chatter count
+  - [x] is user in chat

@@ -11,6 +11,7 @@ clap = { version = "3.1.6", features = ["derive"] }
 colored = "2.0.0"
 confy = "0.4.0"
 dialoguer = "0.10.0"
-reqwest = "0.11.9"
+reqwest = { version = "0.11.9", features = ["json"] }
 serde = { version = "1.0.136", features = ["derive"] }
+tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread"] }
 webbrowser = "0.6.0"
