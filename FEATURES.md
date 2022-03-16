@@ -2,7 +2,7 @@
 - [ ] SupiBot command detail link
 - [ ] ban check (user available)
 - [ ] bot check
--  [ ] user information
+- [ ] user information
   - [ ] broadcaster type check (affiliate/partner)
   - [ ] uid
   - [ ] created
