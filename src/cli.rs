@@ -25,6 +25,8 @@ pub enum Action {
         views: bool,
         #[clap(short, long, help = "Get the type of a given user.")]
         type_of_user: bool,
+        #[clap(short, long, help = "Get the user profile picture link.")]
+        profile_image: bool,
         // TODO: maybe add an option to get link to users logs in a given channel.
     },
     Chat {

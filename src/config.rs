@@ -18,8 +18,8 @@ impl Default for Config {
             .interact()
             .unwrap();
         let mut split = response.split(';').into_iter();
-        let client_id = split.next_back().unwrap().to_owned();
         let access_token = split.next_back().unwrap().to_owned();
+        let client_id = split.next_back().unwrap().to_owned();
         Self {
             client_id,
             access_token,
@@ -29,9 +29,19 @@ impl Default for Config {
 
 impl Config {
     pub fn read() -> Result<Self, confy::ConfyError> {
+        // FIXME: fires twice if config needs to be constructed
         confy::load::<Config>("twitch-lookup")
     }
-    pub fn save(&self) -> Result<()> {
+
+    pub fn client_id(&self) -> &str {
+        &self.client_id
+    }
+
+    pub fn access_token(&self) -> &str {
+        &self.access_token
+    }
+
+    pub fn _save(&self) -> Result<()> {
         confy::store("twitch-lookup", self).unwrap();
         Ok(())
     }
