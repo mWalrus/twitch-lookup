@@ -4,33 +4,34 @@ use dialoguer::{theme::ColorfulTheme, Input};
 use serde::{Deserialize, Serialize};
 use webbrowser;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
 pub struct Config {
     client_id: String,
     access_token: String,
 }
 
-impl Default for Config {
-    fn default() -> Self {
-        webbrowser::open("https://rusterino.waalrus.xyz/login").unwrap();
-        let response: String = Input::with_theme(&ColorfulTheme::default())
-            .with_prompt("Paste your credentials here")
-            .interact()
-            .unwrap();
-        let mut split = response.split(';').into_iter();
-        let access_token = split.next_back().unwrap().to_owned();
-        let client_id = split.next_back().unwrap().to_owned();
-        Self {
-            client_id,
-            access_token,
-        }
-    }
-}
-
 impl Config {
-    pub fn read() -> Result<Self, confy::ConfyError> {
+    pub fn read() -> Result<Self> {
         // FIXME: fires twice if config needs to be constructed
-        confy::load::<Config>("twitch-lookup")
+        let cfg = confy::load::<Config>("twitch-lookup")?;
+        if cfg == Config::default() {
+            webbrowser::open("https://rusterino.waalrus.xyz/login").unwrap();
+            let response: String = Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("Paste your credentials here")
+                .interact()
+                .unwrap();
+            let mut split = response.split(';').into_iter();
+            let access_token = split.next_back().unwrap().to_owned();
+            let client_id = split.next_back().unwrap().to_owned();
+            let cfg = Self {
+                client_id,
+                access_token,
+            };
+            confy::store("twitch-lookup", &cfg).unwrap();
+            Ok(cfg)
+        } else {
+            Ok(cfg)
+        }
     }
 
     pub fn client_id(&self) -> &str {
