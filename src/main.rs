@@ -135,7 +135,7 @@ async fn main() -> Result<()> {
                 );
                 let views = format!(
                     "{} {}",
-                    "- Views".bold(),
+                    "- Views:".bold(),
                     user.view_count().magenta().bold()
                 );
                 let user_type = format!(
