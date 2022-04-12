@@ -36,7 +36,7 @@ pub enum Action {
         broadcaster: bool,
         #[clap(short, long, required_unless_present_any(["vips", "broadcaster", "regular", "count", "present"]), help = "Get the moderators currently in the given chat.")]
         mods: bool,
-        #[clap(short, long, required_unless_present_any(["mods", "broadcaster", "count", "present"]), help = "Get all VIPs currently in the given chat.")]
+        #[clap(short, long, required_unless_present_any(["mods", "broadcaster", "count", "present", "regular"]), help = "Get all VIPs currently in the given chat.")]
         vips: bool,
         #[clap(short, long, required_unless_present_any(["mods", "broadcaster", "regular", "vips", "present"]), help = "Get the total number of chatters currently in the given chat.")]
         count: bool,

@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
             mods,
             vips,
             count,
-            regular: _,
+            regular,
             present,
         } => {
             let chat = Chat::fetch(&channel).await?;
@@ -54,16 +54,18 @@ async fn main() -> Result<()> {
                     "Broadcaster is in chat".bold().bright_green()
                 };
 
-                println!("{message}")
+                println!("{message}");
+                return Ok(());
             }
 
             let items = if mods {
                 chatters.moderators()
             } else if vips {
                 chatters.vips()
-            } else {
-                // regular
+            } else if regular {
                 chatters.viewers()
+            } else {
+                unreachable!()
             };
 
             for (i, item) in items.iter().enumerate() {
