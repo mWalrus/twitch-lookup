@@ -48,7 +48,14 @@ impl User {
     }
 
     pub fn view_count(&self) -> String {
-        // FIXME: make this more readable with commas and stuff
-        self.view_count.to_string()
+        let mut readable_view_count = String::new();
+        let view_count = self.view_count.to_string();
+        for (i, char) in view_count.chars().rev().enumerate() {
+            if i % 3 == 0 && i != 0 {
+                readable_view_count.insert(0, ',');
+            }
+            readable_view_count.insert(0, char);
+        }
+        readable_view_count
     }
 }
