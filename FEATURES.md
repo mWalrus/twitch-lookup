@@ -21,3 +21,9 @@
   - [x] vips
   - [x] total chatter count
   - [x] is user in chat
+- [x] Logs
+- [ ] Downtime
+- [ ] Last stream
+  - [ ] Games played
+  - [ ] Duration
+  - [ ] Start time
