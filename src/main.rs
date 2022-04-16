@@ -162,6 +162,10 @@ async fn main() -> Result<()> {
             };
             println!("{}", result.bold());
         }
+        Action::Logs { user, channel } => {
+            let url = format!("https://logs.ivr.fi/?channel={channel}&username={user}");
+            webbrowser::open(&url)?;
+        }
         _ => {}
     }
     Ok(())

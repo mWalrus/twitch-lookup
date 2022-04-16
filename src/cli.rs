@@ -62,4 +62,8 @@ pub enum Action {
         #[clap(required(true))]
         cmd_name: String,
     },
+    Logs {
+        user: String,
+        channel: String,
+    },
 }
