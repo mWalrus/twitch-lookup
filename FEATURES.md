@@ -2,13 +2,13 @@
 - [x] SupiBot command detail link
 - [ ] ban check (user available)
 - [ ] bot check
-- [ ] user information
-  - [ ] broadcaster type check (affiliate/partner)
-  - [ ] uid
-  - [ ] created
-  - [ ] name (format: DisplayName (loginname))
-  - [ ] views
-  - [ ] type ("Regular" if no type is given)
+- [x] user information
+  - [x] broadcaster type check (affiliate/partner)
+  - [x] uid
+  - [x] created
+  - [x] name (format: DisplayName (loginname))
+  - [x] views
+  - [x] type ("Regular" if no type is given)
 - [ ] follow
   - [ ] followers
   - [ ] following (only get last n follows/get all)
@@ -27,3 +27,5 @@
   - [ ] Games played
   - [ ] Duration
   - [ ] Start time
+- [x] Title
+- [x] Followage
