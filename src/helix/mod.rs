@@ -43,6 +43,8 @@ impl HelixClient {
     }
 
     pub async fn subscription_status(&self, user: &str, channel: &str) -> Result<String> {
+        // FIXME: doesnt seem to work with other users than myself
+        //        check back here for info: https://dev.twitch.tv/docs/api/reference#get-broadcaster-subscriptions
         let user_id = self.get_user(user).await?.uid();
         let channel_id = self.get_user(channel).await?.uid();
         let response = self
