@@ -57,13 +57,18 @@ pub enum Action {
     },
     Live,
     Command {
-        #[clap(required(true))]
         bot: String,
-        #[clap(required(true))]
         cmd_name: String,
     },
     Logs {
         user: String,
+        channel: String,
+    },
+    Fa {
+        user: String,
+        channel: String,
+    },
+    Title {
         channel: String,
     },
 }

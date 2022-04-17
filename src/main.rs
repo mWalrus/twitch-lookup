@@ -1,6 +1,7 @@
 mod cli;
 mod config;
-mod format;
+mod decapi;
+mod gql;
 mod helix;
 mod tmi;
 
@@ -165,6 +166,19 @@ async fn main() -> Result<()> {
         Action::Logs { user, channel } => {
             let url = format!("https://logs.ivr.fi/?channel={channel}&username={user}");
             webbrowser::open(&url)?;
+        }
+        Action::Fa { user, channel } => {
+            let fa = decapi::follow_age(&user, &channel).await?;
+            let output = format!(
+                "{} has followed {} for {}",
+                user.blue(),
+                channel.blue(),
+                fa.green()
+            );
+            println!("{}", output.bold());
+        }
+        Action::Title { channel } => {
+            println!("{}", decapi::title(channel).await?.bold());
         }
         _ => {}
     }
