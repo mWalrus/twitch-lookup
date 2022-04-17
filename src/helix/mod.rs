@@ -1,8 +1,10 @@
+pub mod sub;
 pub mod user;
 
 use crate::Config;
 use anyhow::Result;
 use reqwest::{header, Client};
+use sub::{Sub, SubData};
 use user::User;
 use user::UserData;
 
@@ -28,8 +30,6 @@ impl HelixClient {
     }
 
     pub async fn get_user(&self, user: &str) -> Result<User> {
-        // FIXME: something is going wrong with the auth token.
-        //        API response => 401 Invalid OAuth token
         let response = self
             .client
             .get(format!("https://api.twitch.tv/helix/users?login={user}"))
@@ -37,7 +37,39 @@ impl HelixClient {
             .await?
             .json::<UserData>()
             .await?;
+        // FIXME: errors if the user is not found
         let user: User = response.data[0].clone();
         Ok(user)
+    }
+
+    pub async fn subscription_status(&self, user: &str, channel: &str) -> Result<String> {
+        let user_id = self.get_user(user).await?.uid();
+        let channel_id = self.get_user(channel).await?.uid();
+        let response = self
+            .client
+            .get(format!(
+                "https://api.twitch.tv/helix/subscriptions/user?broadcaster_id={}&user_id={}",
+                &channel_id, &user_id
+            ))
+            .send()
+            .await?;
+
+        if let Ok(sub_data) = response.json::<SubData>().await {
+            let sub = &sub_data.data[0];
+            if sub.is_gift() {
+                return Ok(format!(
+                    "{user} is subscribed to {channel} with a Tier {} gifted sub from {}",
+                    sub.tier(),
+                    sub.gifter()
+                ));
+            } else {
+                return Ok(format!(
+                    "{user} is subscribed to {channel} with a Tier {} sub",
+                    sub.tier()
+                ));
+            }
+        } else {
+            return Ok(format!("{user} is not subscribed to {channel}"));
+        }
     }
 }

@@ -9,7 +9,6 @@
   - [x] name (format: DisplayName (loginname))
   - [x] views
   - [x] type ("Regular" if no type is given)
-- [ ] sub age
 - [ ] currently live followed channels
 - [x] TMI
   - [x] regular viewers
@@ -27,3 +26,4 @@
 - [x] Followage
 - [ ] Following
 - [x] Is live
+- [x] Sub status

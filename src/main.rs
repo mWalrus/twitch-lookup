@@ -183,6 +183,11 @@ async fn main() -> Result<()> {
         Action::Live { channel } => {
             println!("{}", decapi::is_live(channel).await?.bold());
         }
+        Action::Subbed { user, channel } => {
+            let hx_cli = HelixClient::new(config);
+            let sub_status = hx_cli.subscription_status(&user, &channel).await?;
+            println!("{}", sub_status.bold())
+        }
         _ => {}
     }
     Ok(())

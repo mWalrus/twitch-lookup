@@ -73,4 +73,8 @@ pub enum Action {
     Title {
         channel: String,
     },
+    Subbed {
+        user: String,
+        channel: String,
+    },
 }
