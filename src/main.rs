@@ -180,6 +180,9 @@ async fn main() -> Result<()> {
         Action::Title { channel } => {
             println!("{}", decapi::title(channel).await?.bold());
         }
+        Action::Live { channel } => {
+            println!("{}", decapi::is_live(channel).await?.bold());
+        }
         _ => {}
     }
     Ok(())

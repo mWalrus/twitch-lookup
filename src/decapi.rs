@@ -18,3 +18,16 @@ pub async fn title(channel: String) -> Result<String> {
         .await?;
     Ok(title)
 }
+
+pub async fn is_live(channel: String) -> Result<String> {
+    let response = get(format!("https://decapi.me/twitch/viewercount/{channel}"))
+        .await?
+        .text()
+        .await?;
+    if response.contains("offline") {
+        return Ok(response);
+    } else {
+        let formatted = format!("{channel} is currently live with {response} viewers");
+        return Ok(formatted);
+    }
+}

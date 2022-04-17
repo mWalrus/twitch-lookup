@@ -26,3 +26,4 @@
 - [x] Title
 - [x] Followage
 - [ ] Following
+- [x] Is live

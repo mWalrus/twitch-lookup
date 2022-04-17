@@ -55,7 +55,9 @@ pub enum Action {
         #[clap(long, required_unless_present_any(["followers", "following"]), help = "Check the follow relationship between two users.")]
         follows: Option<String>,
     },
-    Live,
+    Live {
+        channel: String,
+    },
     Command {
         bot: String,
         cmd_name: String,
