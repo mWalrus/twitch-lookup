@@ -11,7 +11,7 @@ pub async fn follow_age(user: &str, channel: &str) -> Result<String> {
     Ok(followage)
 }
 
-pub async fn title(channel: String) -> Result<String> {
+pub async fn title(channel: &str) -> Result<String> {
     let title = get(format!("https://decapi.me/twitch/status/{channel}"))
         .await?
         .text()
@@ -19,15 +19,30 @@ pub async fn title(channel: String) -> Result<String> {
     Ok(title)
 }
 
-pub async fn is_live(channel: String) -> Result<String> {
+pub async fn is_live(channel: &str) -> Option<String> {
     let response = get(format!("https://decapi.me/twitch/viewercount/{channel}"))
-        .await?
+        .await
+        .unwrap()
         .text()
-        .await?;
+        .await
+        .unwrap();
     if response.contains("offline") {
-        return Ok(response);
-    } else {
-        let formatted = format!("{channel} is currently live with {response} viewers");
-        return Ok(formatted);
+        return None;
     }
+    Some(response)
+}
+
+pub async fn last_stream(channel: &str) -> Option<String> {
+    let res = get(format!(
+        "https://decapi.me/twitch/videos/{channel}?video_format=${{url}}"
+    ))
+    .await
+    .unwrap()
+    .text()
+    .await
+    .unwrap();
+    if res.eq("Reached the end of the video list!") {
+        return None;
+    }
+    Some(res)
 }

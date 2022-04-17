@@ -95,6 +95,7 @@ async fn main() -> Result<()> {
             views,
             type_of_user,
             profile_image,
+            link,
         } => {
             let client = HelixClient::new(config);
             let user = client.get_user(&login).await?;
@@ -121,6 +122,12 @@ async fn main() -> Result<()> {
                 format!(
                     "{display_name}'s profile image: {}",
                     user.profile_image().blue()
+                )
+            } else if link {
+                format!(
+                    "{display_name}'s profile link: {}{}",
+                    "https://twitch.tv/".bold().blue(),
+                    login.blue().bold()
                 )
             } else {
                 let broadcaster_type = format!(
@@ -149,9 +156,15 @@ async fn main() -> Result<()> {
                     "- Profile image:".bold(),
                     user.profile_image().blue().bold()
                 );
+                let link = format!(
+                    "{} {}{}",
+                    "- Profile link:".bold(),
+                    "https://twitch.tv/".bold().blue(),
+                    &login.bold().blue()
+                );
                 let header = format!("{display_name}'s profile info");
                 format!(
-                    "{}\n{}\n{}\n{}\n{}\n{}\n{}",
+                    "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
                     header.bold(),
                     uid,
                     created,
@@ -159,6 +172,7 @@ async fn main() -> Result<()> {
                     broadcaster_type,
                     user_type,
                     profile_image,
+                    link
                 )
             };
             println!("{}", result.bold());
@@ -178,15 +192,40 @@ async fn main() -> Result<()> {
             println!("{}", output.bold());
         }
         Action::Title { channel } => {
-            println!("{}", decapi::title(channel).await?.bold());
+            println!(
+                "{}\n{}{}",
+                decapi::title(&channel).await?.bold(),
+                "https://twitch.tv/".blue().bold(),
+                channel.blue().bold()
+            );
         }
         Action::Live { channel } => {
-            println!("{}", decapi::is_live(channel).await?.bold());
+            if let Some(view_count) = decapi::is_live(&channel).await {
+                println!(
+                    "{}\n{}{}",
+                    format!("{channel} is live with {} viewer(s)", view_count.magenta()).bold(),
+                    "https://twitch.tv/".bold().blue(),
+                    channel.bold().blue()
+                )
+            } else {
+                println!(
+                    "{} {}",
+                    channel.blue().bold(),
+                    "is currently offline".bold()
+                )
+            }
         }
         Action::Subbed { user, channel } => {
             let hx_cli = HelixClient::new(config);
             let sub_status = hx_cli.subscription_status(&user, &channel).await?;
             println!("{}", sub_status.bold())
+        }
+        Action::Ls { channel } => {
+            if let Some(url) = decapi::last_stream(&channel).await {
+                println!("{} {}", "Last Stream URL:".bold(), url.bold().blue());
+            } else {
+                println!("{}", format!("{channel} has no vods!").bold());
+            }
         }
         _ => {}
     }
