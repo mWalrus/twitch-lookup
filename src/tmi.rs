@@ -39,7 +39,11 @@ impl Chat {
 
 impl Chatters {
     pub fn broadcaster(&self) -> &str {
-        &self.broadcaster[0]
+        if self.broadcaster.is_empty() {
+            return "";
+        } else {
+            &self.broadcaster[0]
+        }
     }
 
     pub fn moderators(&self) -> &Vec<String> {
