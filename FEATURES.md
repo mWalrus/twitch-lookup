@@ -9,10 +9,6 @@
   - [x] name (format: DisplayName (loginname))
   - [x] views
   - [x] type ("Regular" if no type is given)
-- [ ] follow
-  - [ ] followers
-  - [ ] following (only get last n follows/get all)
-  - [ ] follow relationship
 - [ ] sub age
 - [ ] currently live followed channels
 - [x] TMI
@@ -29,3 +25,4 @@
   - [ ] Start time
 - [x] Title
 - [x] Followage
+- [ ] Following
