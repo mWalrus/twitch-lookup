@@ -98,7 +98,15 @@ async fn main() -> Result<()> {
             link,
         } => {
             let client = HelixClient::new(config);
-            let user = client.get_user(&login).await?;
+            let user = client.get_user(&login).await;
+            if user.is_none() {
+                println!(
+                    "{}",
+                    format!("user {} could not be found", login.bold().blue()).bold()
+                );
+                return Ok(());
+            }
+            let user = user.unwrap();
             let display_name = user.display_name();
             let result = if broadcaster_type {
                 format!(

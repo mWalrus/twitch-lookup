@@ -29,24 +29,29 @@ impl HelixClient {
         Self { client }
     }
 
-    pub async fn get_user(&self, user: &str) -> Result<User> {
+    pub async fn get_user(&self, user: &str) -> Option<User> {
         let response = self
             .client
             .get(format!("https://api.twitch.tv/helix/users?login={user}"))
             .send()
-            .await?
+            .await
+            .unwrap()
             .json::<UserData>()
-            .await?;
+            .await
+            .unwrap();
         // FIXME: errors if the user is not found
+        if response.data.is_empty() {
+            return None;
+        }
         let user: User = response.data[0].clone();
-        Ok(user)
+        Some(user)
     }
 
     pub async fn subscription_status(&self, user: &str, channel: &str) -> Result<String> {
         // FIXME: doesnt seem to work with other users than myself
         //        check back here for info: https://dev.twitch.tv/docs/api/reference#get-broadcaster-subscriptions
-        let user_id = self.get_user(user).await?.uid();
-        let channel_id = self.get_user(channel).await?.uid();
+        let user_id = self.get_user(user).await.unwrap().uid();
+        let channel_id = self.get_user(channel).await.unwrap().uid();
         let response = self
             .client
             .get(format!(
