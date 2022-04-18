@@ -1,4 +1,7 @@
+use crate::format;
+use colored::Colorize;
 use serde::Deserialize;
+use std::fmt;
 
 #[derive(Deserialize, Debug)]
 pub struct UserData {
@@ -8,15 +11,54 @@ pub struct UserData {
 #[derive(Deserialize, Debug, Clone)]
 pub struct User {
     broadcaster_type: String,
+    login: String,
     display_name: String,
     #[serde(rename(deserialize = "id"))]
     uid: String,
     #[serde(rename(deserialize = "profile_image_url"))]
-    profile_image: Option<String>,
+    profile_image: String,
     #[serde(rename(deserialize = "type"))]
     user_type: String,
     created_at: String,
     view_count: u32,
+}
+
+impl fmt::Display for User {
+    fn fmt(&self, _: &mut fmt::Formatter<'_>) -> fmt::Result {
+        println!(
+            "{}{}",
+            self.display_name.bold(),
+            "'s profile information".bold()
+        );
+        println!("{} {}", "- UID:".bold(), self.uid.bold().magenta());
+        println!(
+            "{} {}",
+            "- Created at:".bold(),
+            self.created_at[..10].to_string().bold().green()
+        );
+        println!(
+            "{} {}",
+            "- Views:".bold(),
+            format::readable_number(self.view_count).bold().magenta()
+        );
+        println!(
+            "{} {}",
+            "- Broadcaster type:".bold(),
+            self.broadcaster_type.bold().blue()
+        );
+        println!("{} {}", "- User type:".bold(), self.user_type.bold().blue());
+        println!(
+            "{} {}",
+            "- Profile image:".bold(),
+            self.profile_image.bold().blue()
+        );
+        println!(
+            "{} {}",
+            "- Profile link:".bold(),
+            format!("https://twitch.tv/{}", self.login).bold().blue()
+        );
+        Ok(())
+    }
 }
 
 impl User {
@@ -33,9 +75,7 @@ impl User {
     }
 
     pub fn profile_image(&self) -> String {
-        self.profile_image
-            .clone()
-            .unwrap_or(String::from("Not found"))
+        self.profile_image.to_string()
     }
 
     pub fn user_type(&self) -> String {
@@ -47,15 +87,11 @@ impl User {
         self.created_at[..10].to_string()
     }
 
+    pub fn login(&self) -> String {
+        self.login.to_string()
+    }
+
     pub fn view_count(&self) -> String {
-        let mut readable_view_count = String::new();
-        let view_count = self.view_count.to_string();
-        for (i, char) in view_count.chars().rev().enumerate() {
-            if i % 3 == 0 && i != 0 {
-                readable_view_count.insert(0, ',');
-            }
-            readable_view_count.insert(0, char);
-        }
-        readable_view_count
+        format::readable_number(self.view_count)
     }
 }

@@ -81,4 +81,8 @@ pub enum Action {
     Ls {
         channel: String,
     },
+    Vods {
+        channel: String,
+        amount: Option<u8>,
+    },
 }

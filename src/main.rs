@@ -1,6 +1,7 @@
 mod cli;
 mod config;
 mod decapi;
+mod format;
 mod gql;
 mod helix;
 mod tmi;
@@ -138,50 +139,8 @@ async fn main() -> Result<()> {
                     login.blue().bold()
                 )
             } else {
-                let broadcaster_type = format!(
-                    "{} {}",
-                    "- Broadcaster type:".bold(),
-                    user.broadcaster_type().blue().bold()
-                );
-                let uid = format!("{} {}", "- UID:".bold(), user.uid().magenta().bold());
-                let created = format!(
-                    "{} {}",
-                    "- Created at:".bold(),
-                    user.created_at().green().bold()
-                );
-                let views = format!(
-                    "{} {}",
-                    "- Views:".bold(),
-                    user.view_count().magenta().bold()
-                );
-                let user_type = format!(
-                    "{} {}",
-                    "- User type:".bold(),
-                    user.user_type().blue().bold()
-                );
-                let profile_image = format!(
-                    "{} {}",
-                    "- Profile image:".bold(),
-                    user.profile_image().blue().bold()
-                );
-                let link = format!(
-                    "{} {}{}",
-                    "- Profile link:".bold(),
-                    "https://twitch.tv/".bold().blue(),
-                    &login.bold().blue()
-                );
-                let header = format!("{display_name}'s profile info");
-                format!(
-                    "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-                    header.bold(),
-                    uid,
-                    created,
-                    views,
-                    broadcaster_type,
-                    user_type,
-                    profile_image,
-                    link
-                )
+                println!("{user}");
+                return Ok(());
             };
             println!("{}", result.bold());
         }
@@ -233,6 +192,15 @@ async fn main() -> Result<()> {
                 println!("{} {}", "Last Stream URL:".bold(), url.bold().blue());
             } else {
                 println!("{}", format!("{channel} has no vods!").bold());
+            }
+        }
+        Action::Vods { channel, amount } => {
+            let client = HelixClient::new(config);
+            let vods = client.get_vods(&channel, amount).await;
+            if let Some(vods) = vods {
+                for (i, vod) in vods.data.iter().enumerate() {
+                    println!("{} {}\n{vod}", "Vod".bold(), (i + 1).to_string().bold());
+                }
             }
         }
         _ => {}
