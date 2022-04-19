@@ -1,6 +1,6 @@
 # FEATURES
 - [x] SupiBot command detail link
-- [ ] ban check (user available)
+- [x] ban check (user available)
 - [ ] bot check
 - [x] user information
   - [x] broadcaster type check (affiliate/partner)
@@ -17,11 +17,8 @@
   - [x] total chatter count
   - [x] is user in chat
 - [x] Logs
-- [ ] Downtime
-- [ ] Last stream
-  - [ ] Games played
-  - [ ] Duration
-  - [ ] Start time
+- [ ] Downtime (https://api.ivr.fi/v2/twitch/user/69012069?id=true)
+- [x] Vods
 - [x] Title
 - [x] Followage
 - [ ] Following
