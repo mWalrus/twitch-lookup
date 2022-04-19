@@ -10,6 +10,7 @@ pub struct Args {
 #[non_exhaustive]
 #[derive(Subcommand, Debug)]
 pub enum Action {
+    #[clap(about = "Get general user account information")]
     User {
         #[clap(required(true))]
         login: String,
@@ -30,6 +31,7 @@ pub enum Action {
         #[clap(short, long, help = "Get the user profile link.")]
         link: bool,
     },
+    #[clap(about = "Get chat information for a given account")]
     Chat {
         #[clap(required(true))]
         channel: String,
@@ -46,6 +48,7 @@ pub enum Action {
         #[clap(short, long, required_unless_present_any(["mods", "broadcaster", "regular", "vips", "count"]), help = "Check whether a given user is present in the given chat.")]
         present: Option<String>,
     },
+    #[clap(about = "Follow information (doesn't do anything at the moment)")]
     Follow {
         #[clap(required(true))]
         user: String,
@@ -56,33 +59,24 @@ pub enum Action {
         #[clap(long, required_unless_present_any(["followers", "following"]), help = "Check the follow relationship between two users.")]
         follows: Option<String>,
     },
-    Live {
-        channel: String,
-    },
-    Command {
-        bot: String,
-        cmd_name: String,
-    },
-    Logs {
-        user: String,
-        channel: String,
-    },
-    Fa {
-        user: String,
-        channel: String,
-    },
-    Title {
-        channel: String,
-    },
-    Subbed {
-        user: String,
-        channel: String,
-    },
-    Ls {
-        channel: String,
-    },
-    Vods {
-        channel: String,
-        amount: Option<u8>,
-    },
+    #[clap(about = "Check if channel is live and how many viewers they have at the moment")]
+    Live { channel: String },
+    #[clap(about = "Open up a given bot command in your default browser")]
+    Command { bot: String, cmd_name: String },
+    #[clap(about = "Open up a given users logs in a given channel in your default browser")]
+    Logs { user: String, channel: String },
+    #[clap(about = "Check how long a user has followed a given channel")]
+    Fa { user: String, channel: String },
+    #[clap(about = "Get the stream title from a given channel")]
+    Title { channel: String },
+    #[clap(about = "Check your own subscription status to a given channel")]
+    Subbed { user: String, channel: String },
+    #[clap(
+        about = "Get the URL to the latest VOD in a given channel (deprecated; use `vods` instead)"
+    )]
+    Ls { channel: String },
+    #[clap(about = "Get VOD(s) from a given channel")]
+    Vods { channel: String, amount: Option<u8> },
+    #[clap(about = "Get the current downtime for a given channel")]
+    Dt { channel: String },
 }

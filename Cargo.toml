@@ -5,13 +5,25 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# Comments down below are dependency justifications
 [dependencies]
+# Simpler Result handling
 anyhow = "1.0.56"
+# Argument definition and handling
 clap = { version = "3.1.6", features = ["derive"] }
+# Output coloring
 colored = "2.0.0"
+# Simple configuration file reading
 confy = "0.4.0"
+# Used solely for configuration generation (taking input)
 dialoguer = "0.10.0"
+# General web requests to the different APIs called in the project.
 reqwest = { version = "0.11.9", features = ["json"] }
+# Deserialization for JSON objects fetched from API calls
 serde = { version = "1.0.136", features = ["derive"] }
+# Temporary dependency for JSON handling when building new functionality
+serde_json = "1.0.79"
+# Async/await functionality
 tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread"] }
+# Opening links in the users default web-browser
 webbrowser = "0.6.0"
