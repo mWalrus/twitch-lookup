@@ -99,6 +99,13 @@ async fn main() -> Result<()> {
             link,
         } => {
             let client = HelixClient::new(config);
+            // Out of name length bounds
+            // TODO: names can only contain english letters, numbers and dashes
+            //       so we need to check if the given name deviates from these rules.
+            if login.len() < 3 || login.len() > 25 {
+                println!("{}", "The name provided is not valid!".bold().yellow());
+                return Ok(());
+            }
             let user = client.get_user(&login).await;
             if user.is_none() {
                 println!(
