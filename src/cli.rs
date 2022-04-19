@@ -71,10 +71,6 @@ pub enum Action {
     Title { channel: String },
     #[clap(about = "Check your own subscription status to a given channel")]
     Subbed { user: String, channel: String },
-    #[clap(
-        about = "Get the URL to the latest VOD in a given channel (deprecated; use `vods` instead)"
-    )]
-    Ls { channel: String },
     #[clap(about = "Get VOD(s) from a given channel")]
     Vods { channel: String, amount: Option<u8> },
     #[clap(about = "Get the current downtime for a given channel")]

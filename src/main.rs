@@ -4,6 +4,7 @@ mod decapi;
 mod format;
 mod gql;
 mod helix;
+mod leppunen;
 mod tmi;
 
 use anyhow::Result;
@@ -193,13 +194,6 @@ async fn main() -> Result<()> {
             let hx_cli = HelixClient::new(config);
             let sub_status = hx_cli.subscription_status(&user, &channel).await?;
             println!("{}", sub_status.bold())
-        }
-        Action::Ls { channel } => {
-            if let Some(url) = decapi::last_stream(&channel).await {
-                println!("{} {}", "Last Stream URL:".bold(), url.bold().blue());
-            } else {
-                println!("{}", format!("{channel} has no vods!").bold());
-            }
         }
         Action::Vods { channel, amount } => {
             let client = HelixClient::new(config);

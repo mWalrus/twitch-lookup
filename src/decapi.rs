@@ -31,18 +31,3 @@ pub async fn is_live(channel: &str) -> Option<String> {
     }
     Some(response)
 }
-
-pub async fn last_stream(channel: &str) -> Option<String> {
-    let res = get(format!(
-        "https://decapi.me/twitch/videos/{channel}?video_format=${{url}}"
-    ))
-    .await
-    .unwrap()
-    .text()
-    .await
-    .unwrap();
-    if res.eq("Reached the end of the video list!") {
-        return None;
-    }
-    Some(res)
-}
