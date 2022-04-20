@@ -24,3 +24,9 @@
 - [ ] Following
 - [x] Is live
 - [x] Sub status
+
+# Changes
+- [ ] Store user login name and use as default for commands like `fa` and `subbed`
+- [ ] Improve user subcommand using leppunen's API
+  - [x] Implement leppunen API call
+  - [ ] Implement the new subcommand structure in clap
