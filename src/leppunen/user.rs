@@ -18,6 +18,8 @@ pub trait VerboseUser {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
+    #[serde(rename(deserialize = "id"), deserialize_with = "deserialize_uid")]
+    pub uid: u32,
     pub banned: bool,
     pub display_name: String,
     pub bio: Option<String>,
@@ -79,6 +81,9 @@ pub struct LastBroadcast {
 }
 
 impl User {
+    pub fn uid(&self) -> u32 {
+        self.uid
+    }
     pub fn display_name_colored(&self) -> String {
         let (r, g, b) = format::hex_to_rgb(&self.chat_color);
         self.display_name.truecolor(r, g, b).to_string()
@@ -113,6 +118,11 @@ impl CompactUser for User {
             "{}{}",
             self.display_name_colored().bold(),
             "'s profile information:".bold()
+        );
+        println!(
+            "{} {}",
+            "- UID:".bold(),
+            self.uid.to_string().bold().magenta()
         );
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
         println!(
@@ -158,6 +168,11 @@ impl VerboseUser for User {
             "{}{}",
             self.display_name_colored().bold(),
             "'s profile information:".bold()
+        );
+        println!(
+            "{} {}",
+            "- UID:".bold(),
+            self.uid.to_string().bold().magenta()
         );
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
         println!(
@@ -338,4 +353,12 @@ where
 {
     let s: String = Deserialize::deserialize(data)?;
     S::from_str(&s).map_err(de::Error::custom)
+}
+
+fn deserialize_uid<'de, D>(data: D) -> Result<u32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(data).unwrap();
+    Ok(s.parse::<u32>().unwrap_or(0))
 }

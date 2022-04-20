@@ -13,7 +13,7 @@ use cli::{Action, Args, UserAction};
 use colored::Colorize;
 use config::Config;
 use helix::HelixClient;
-use leppunen::user::{CompactUser, User, VerboseUser};
+use leppunen::user::{CompactUser, VerboseUser};
 use tmi::Chat;
 
 // NOTE: https://gist.github.com/Chronophylos/512675897009f26472dd3cfc6b6744cb
@@ -97,6 +97,15 @@ async fn main() -> Result<()> {
             UserAction::Verbose { user } => {
                 let user: Box<dyn VerboseUser> = Box::new(leppunen::API::user(&user).await?);
                 user.print()?;
+            }
+            UserAction::Uid { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!(
+                    "{}{} {}",
+                    user.display_name_colored().bold(),
+                    "'s user id:".bold(),
+                    user.uid().to_string().bold().magenta()
+                );
             }
             UserAction::Bc { user } => {
                 let user = leppunen::API::user(&user).await?;
