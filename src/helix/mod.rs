@@ -1,12 +1,11 @@
 pub mod sub;
-pub mod user;
 pub mod vod;
 
+use crate::leppunen::API;
 use crate::Config;
 use anyhow::Result;
 use reqwest::{header, Client};
 use sub::SubData;
-use user::{User, UserData};
 use vod::VodData;
 
 pub struct HelixClient {
@@ -30,30 +29,13 @@ impl HelixClient {
         Self { client }
     }
 
-    pub async fn get_user(&self, user: &str) -> Option<User> {
-        let response = self
-            .client
-            .get(format!("https://api.twitch.tv/helix/users?login={user}"))
-            .send()
-            .await
-            .unwrap()
-            .json::<UserData>()
-            .await
-            .unwrap();
-        if response.data.is_empty() {
-            return None;
-        }
-        let user: User = response.data[0].clone();
-        Some(user)
-    }
-
     pub async fn subscription_status(&self, user: &str, channel: &str) -> Result<String> {
         // NOTE: if understood correctly, sub information about another user other than myself can only be acquired if that user has authenticated my application...
         //       gql might be the saviour here.
         // FIXME: doesnt seem to work with other users than myself
         //        check back here for info: https://dev.twitch.tv/docs/api/reference#get-broadcaster-subscriptions
-        let user_id = self.get_user(user).await.unwrap().uid();
-        let channel_id = self.get_user(channel).await.unwrap().uid();
+        let user_id = API::user(user).await.unwrap().uid();
+        let channel_id = API::user(channel).await.unwrap().uid();
         let res = self
             .client
             .get(format!(
@@ -82,7 +64,7 @@ impl HelixClient {
         }
     }
     pub async fn get_vods(&self, channel: &str, amount: Option<u8>) -> Option<VodData> {
-        let user_id = self.get_user(channel).await.unwrap().uid();
+        let user_id = API::user(channel).await.unwrap().uid();
         let res = self
             .client
             .get(format!(
