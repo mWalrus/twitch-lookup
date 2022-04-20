@@ -15,27 +15,8 @@ pub struct Args {
 #[non_exhaustive]
 #[derive(Subcommand, Debug)]
 pub enum Action {
-    #[clap(about = "Get general user account information")]
-    User {
-        #[clap(required(true))]
-        login: String,
-        #[clap(short, long, help = "Get the broadcaster type of a given user.")]
-        broadcaster_type: bool,
-        #[clap(short, long, help = "Get the UID of a given user.")]
-        uid: bool,
-        #[clap(short, long, help = "Get the date a given user was created.")]
-        created: bool,
-        #[clap(short, long, help = "Get the name of a given user.")]
-        name: bool,
-        #[clap(short, long, help = "Get the views of a given user.")]
-        views: bool,
-        #[clap(short, long, help = "Get the type of a given user.")]
-        type_of_user: bool,
-        #[clap(short, long, help = "Get the user profile picture link.")]
-        profile_image: bool,
-        #[clap(short, long, help = "Get the user profile link.")]
-        link: bool,
-    },
+    #[clap(subcommand, about = "Get general user account information")]
+    User(UserAction),
     #[clap(about = "Get chat information for a given account")]
     Chat {
         #[clap(required(true))]
@@ -80,4 +61,40 @@ pub enum Action {
     Vods { channel: String, amount: Option<u8> },
     #[clap(about = "Get the current downtime for a given channel")]
     Dt { channel: String },
+}
+
+#[derive(Subcommand, Debug)]
+pub enum UserAction {
+    #[clap(about = "Compact list of user information")]
+    Compact { user: String }, // compact information
+    #[clap(about = "Verbose list of user information")]
+    Verbose { user: String }, // verbose information
+    #[clap(about = "Ban check")]
+    Bc { user: String }, // ban check
+    #[clap(about = "Display name")]
+    Dn { user: String }, // display name
+    #[clap(about = "Following")]
+    Uf { user: String }, // user follows
+    #[clap(about = "Followers")]
+    Fu { user: String }, // follows user
+    #[clap(about = "Channel views")]
+    Cv { user: String }, // channel views
+    #[clap(about = "Chat color")]
+    Cc { user: String }, // chat color
+    #[clap(about = "Profile picture")]
+    Pfp { user: String }, // profile picture
+    #[clap(about = "Verified bot check")]
+    Bot { user: String }, // verified bot check
+    #[clap(about = "Account creation date")]
+    Cd { user: String }, // created date
+    #[clap(about = "Emote prefix")]
+    Ep { user: String }, // emote prefix
+    #[clap(about = "Roles")]
+    Roles { user: String }, // roles
+    #[clap(about = "Badges")]
+    Badges { user: String }, // badges
+    #[clap(about = "Chat settings")]
+    Cs { user: String }, // chat settings
+    #[clap(about = "Downtime")]
+    Dt { user: String }, // downtime
 }

@@ -9,6 +9,8 @@ edition = "2021"
 [dependencies]
 # Simpler Result handling
 anyhow = "1.0.56"
+# for date handling
+chrono = "0.4.19"
 # Argument definition and handling
 clap = { version = "3.1.6", features = ["derive"] }
 # Output coloring
@@ -21,8 +23,6 @@ dialoguer = "0.10.0"
 reqwest = { version = "0.11.9", features = ["json"] }
 # Deserialization for JSON objects fetched from API calls
 serde = { version = "1.0.136", features = ["derive"] }
-# Temporary dependency for JSON handling when building new functionality
-serde_json = "1.0.79"
 # Async/await functionality
 tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread"] }
 # Opening links in the users default web-browser

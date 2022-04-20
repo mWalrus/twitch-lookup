@@ -7,6 +7,14 @@ use serde::Deserialize;
 use std::fmt::Display;
 use std::str::FromStr;
 
+pub trait CompactUser {
+    fn print(&self) -> Result<()>;
+}
+
+pub trait VerboseUser {
+    fn print(&self) -> Result<()>;
+}
+
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
@@ -70,50 +78,85 @@ pub struct LastBroadcast {
     pub title: Option<String>,
 }
 
-fn deserialize_millis<'de, D>(data: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let millis: i64 = Deserialize::deserialize(data).unwrap_or(0);
-    Ok(Duration::milliseconds(millis))
-}
-
-fn deserialize_seconds<'de, D>(data: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let seconds: i64 = Deserialize::deserialize(data).unwrap_or(0);
-    Ok(Duration::seconds(seconds))
-}
-
-fn deserialize_minutes<'de, D>(data: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let minutes: i64 = Deserialize::deserialize(data).unwrap_or(0);
-    Ok(Duration::minutes(minutes))
-}
-
-fn deserialize_date_time<'de, D, S>(data: D) -> Result<S, D::Error>
-where
-    D: Deserializer<'de>,
-    S: FromStr,
-    S::Err: Display,
-{
-    let s: String = Deserialize::deserialize(data)?;
-    S::from_str(&s).map_err(de::Error::custom)
-}
-
-impl Display for User {
-    fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl User {
+    pub fn display_name_colored(&self) -> String {
         let (r, g, b) = format::hex_to_rgb(&self.chat_color);
+        self.display_name.truecolor(r, g, b).to_string()
+    }
+    pub fn following(&self) -> String {
+        format::readable_number(self.follows as u32)
+            .magenta()
+            .to_string()
+    }
+    pub fn followers(&self) -> String {
+        format::readable_number(self.followers)
+            .magenta()
+            .to_string()
+    }
+    pub fn channel_views(&self) -> String {
+        format::readable_number(self.channel_views)
+            .magenta()
+            .to_string()
+    }
+    pub fn chat_color(&self) -> String {
+        let (r, g, b) = format::hex_to_rgb(&self.chat_color);
+        self.chat_color.truecolor(r, g, b).to_string()
+    }
+}
+
+impl CompactUser for User {
+    fn print(&self) -> Result<()> {
+        let follows = format::readable_number(self.follows.into());
+        let followers = format::readable_number(self.followers);
+        let channel_views = format::readable_number(self.channel_views);
+        println!(
+            "{}{}",
+            self.display_name_colored().bold(),
+            "'s profile information:".bold()
+        );
+        println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
+        println!(
+            "{} {}",
+            "- Display name:".bold(),
+            self.display_name_colored().bold()
+        );
+        println!("{} {}", "- Follows:".bold(), follows.bold().magenta());
+        println!("{} {}", "- Following:".bold(), followers.bold().magenta());
+        println!(
+            "{} {}",
+            "- Channel view:".bold(),
+            channel_views.bold().magenta()
+        );
+        println!("{} {}", "- Chat color:".bold(), self.chat_color().bold());
+        println!("{} {}", "- Profile image:".bold(), self.logo.bold().blue());
+        println!(
+            "{} {}",
+            "- Account created:".bold(),
+            self.created_at
+                .date()
+                .naive_utc()
+                .to_string()
+                .bold()
+                .green()
+        );
+        println!(
+            "{} {}",
+            "- Downtime:".bold(),
+            self.last_broadcast.time_since().bold().green()
+        );
+        Ok(())
+    }
+}
+
+impl VerboseUser for User {
+    fn print(&self) -> Result<()> {
         let follows = format::readable_number(self.follows.into());
         let followers = format::readable_number(self.followers);
         let channel_views = format::readable_number(self.channel_views);
 
         println!(
             "{}{}",
-            self.display_name.bold().truecolor(r, g, b),
+            self.display_name_colored().bold(),
             "'s profile information:".bold()
         );
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
@@ -125,11 +168,7 @@ impl Display for User {
             "- Channel views:".bold(),
             channel_views.bold().magenta()
         );
-        println!(
-            "{} {}",
-            "- Chat color:".bold(),
-            self.chat_color.bold().truecolor(r, g, b)
-        );
+        println!("{} {}", "- Chat color:".bold(), self.chat_color().bold());
         println!(
             "{} {}",
             "- Profile picture:".bold(),
@@ -162,6 +201,22 @@ impl Display for User {
     }
 }
 
+impl Roles {
+    pub fn get_active(&self) -> Vec<String> {
+        let mut roles: Vec<String> = Vec::new();
+        if self.is_affiliate {
+            roles.push(String::from("Affiliate"));
+        }
+        if self.is_partner {
+            roles.push(String::from("Partner"));
+        }
+        if self.is_staff.unwrap_or(false) {
+            roles.push(String::from("Staff"));
+        }
+        roles
+    }
+}
+
 impl Display for Roles {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         println!("  {} {}", "- Affiliate:".bold(), yes_no(self.is_affiliate));
@@ -175,17 +230,22 @@ impl Display for Roles {
     }
 }
 
+impl Badge {
+    pub fn color(&self) -> String {
+        match self.title.as_ref() {
+            "Verified" => self.title.truecolor(196, 77, 255).to_string(),
+            "Prime Gaming" => self.title.truecolor(38, 139, 255).to_string(),
+            "GLHF Pledge" => self.title.white().to_string(),
+            "GlitchCon 2020" => self.title.truecolor(242, 179, 255).to_string(),
+            "TwitchCon 2020 - Amsterdam" => self.title.truecolor(170, 0, 204).to_string(),
+            _ => self.title.white().to_string(),
+        }
+    }
+}
+
 impl Display for Badge {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let out = match self.title.as_ref() {
-            "Verified" => "Verified".truecolor(196, 77, 255),
-            "Prime Gaming" => "Prime Gaming".truecolor(38, 139, 255),
-            "GLHF Pledge" => "GLHF Pledge".white(),
-            "GlitchCon 2020" => "GlitchCon 2020".truecolor(242, 179, 255),
-            "TwitchCon 2020 - Amsterdam" => "TwitchCon 2020 - Amsterdam".truecolor(170, 0, 204),
-            _ => self.title.white(),
-        };
-        write!(f, "  {} {}", "-".bold(), out.bold())
+        write!(f, "  {} {}", "-".bold(), self.color().bold())
     }
 }
 
@@ -227,7 +287,7 @@ impl Display for ChatSettings {
 }
 
 impl LastBroadcast {
-    fn time_since(&self) -> String {
+    pub fn time_since(&self) -> String {
         let now = Utc::now();
         let d = now.signed_duration_since(self.started_at);
         format::duration_to_hms(d)
@@ -240,4 +300,38 @@ fn yes_no(b: bool) -> String {
     } else {
         "no".bold().red().to_string()
     }
+}
+
+fn deserialize_millis<'de, D>(data: D) -> Result<Duration, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let millis: i64 = Deserialize::deserialize(data).unwrap_or(0);
+    Ok(Duration::milliseconds(millis))
+}
+
+fn deserialize_seconds<'de, D>(data: D) -> Result<Duration, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let seconds: i64 = Deserialize::deserialize(data).unwrap_or(0);
+    Ok(Duration::seconds(seconds))
+}
+
+fn deserialize_minutes<'de, D>(data: D) -> Result<Duration, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let minutes: i64 = Deserialize::deserialize(data).unwrap_or(0);
+    Ok(Duration::minutes(minutes))
+}
+
+fn deserialize_date_time<'de, D, S>(data: D) -> Result<S, D::Error>
+where
+    D: Deserializer<'de>,
+    S: FromStr,
+    S::Err: Display,
+{
+    let s: String = Deserialize::deserialize(data)?;
+    S::from_str(&s).map_err(de::Error::custom)
 }

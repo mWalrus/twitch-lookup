@@ -9,10 +9,11 @@ mod tmi;
 
 use anyhow::Result;
 use clap::Parser;
-use cli::{Action, Args};
-use colored::*;
+use cli::{Action, Args, UserAction};
+use colored::Colorize;
 use config::Config;
 use helix::HelixClient;
+use leppunen::user::{CompactUser, User, VerboseUser};
 use tmi::Chat;
 
 // NOTE: https://gist.github.com/Chronophylos/512675897009f26472dd3cfc6b6744cb
@@ -88,70 +89,151 @@ async fn main() -> Result<()> {
             }
             // TODO: add more bots
         }
-        Action::User {
-            login,
-            broadcaster_type,
-            uid,
-            created,
-            name,
-            views,
-            type_of_user,
-            profile_image,
-            link,
-        } => {
-            let client = HelixClient::new(config);
-            // Out of name length bounds
-            // TODO: names can only contain english letters, numbers and dashes
-            //       so we need to check if the given name deviates from these rules.
-            if login.len() < 3 || login.len() > 25 {
-                println!("{}", "The name provided is not valid!".bold().yellow());
-                return Ok(());
+        Action::User(user_action) => match user_action {
+            UserAction::Compact { user } => {
+                let user: Box<dyn CompactUser> = Box::new(leppunen::API::user(&user).await?);
+                user.print()?;
             }
-            let user = client.get_user(&login).await;
-            if user.is_none() {
+            UserAction::Verbose { user } => {
+                let user: Box<dyn VerboseUser> = Box::new(leppunen::API::user(&user).await?);
+                user.print()?;
+            }
+            UserAction::Bc { user } => {
+                let user = leppunen::API::user(&user).await?;
+                if user.banned {
+                    println!(
+                        "{} {}",
+                        user.display_name_colored().bold(),
+                        "is banned".bold().red()
+                    );
+                } else {
+                    println!(
+                        "{} {}",
+                        user.display_name_colored().bold(),
+                        "is not banned".bold().green()
+                    );
+                }
+            }
+            UserAction::Dn { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!("{}", user.display_name_colored().bold());
+            }
+            UserAction::Uf { user } => {
+                let user = leppunen::API::user(&user).await?;
                 println!(
-                    "{}",
-                    format!("user {} could not be found", login.bold().blue()).bold()
+                    "{} {} {} {}",
+                    user.display_name_colored().bold(),
+                    "is following".bold(),
+                    user.following().bold(),
+                    "people".bold()
                 );
-                return Ok(());
             }
-            let user = user.unwrap();
-            let display_name = user.display_name();
-            let result = if broadcaster_type {
-                format!(
-                    "{display_name}'s broadcaster_type is: {}",
-                    user.broadcaster_type().blue()
-                )
-            } else if uid {
-                format!("{display_name}'s user id is: {}", user.uid().magenta())
-            } else if created {
-                format!(
-                    "{display_name}'s account was created on {}",
-                    user.created_at().green()
-                )
-            } else if name {
-                format!("{login}'s display name is {display_name}")
-            } else if views {
-                format!("{display_name} has {} views", user.view_count().magenta())
-            } else if type_of_user {
-                format!("{display_name}'s user type is: {}", user.user_type().blue())
-            } else if profile_image {
-                format!(
-                    "{display_name}'s profile image: {}",
-                    user.profile_image().blue()
-                )
-            } else if link {
-                format!(
-                    "{display_name}'s profile link: {}{}",
-                    "https://twitch.tv/".bold().blue(),
-                    login.blue().bold()
-                )
-            } else {
-                println!("{user}");
-                return Ok(());
-            };
-            println!("{}", result.bold());
-        }
+            UserAction::Fu { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!(
+                    "{} {} {} {}",
+                    user.display_name_colored().bold(),
+                    "has".bold(),
+                    user.followers().bold(),
+                    "followers".bold()
+                );
+            }
+            UserAction::Cv { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!(
+                    "{} {} {} {}",
+                    user.display_name_colored().bold(),
+                    "has".bold(),
+                    user.channel_views().bold(),
+                    "channel views".bold()
+                );
+            }
+            UserAction::Cc { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!("{}", user.chat_color().bold());
+            }
+            UserAction::Pfp { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!(
+                    "{}{} {}",
+                    user.display_name_colored().bold(),
+                    "'s profile image:".bold(),
+                    user.logo.bold().blue()
+                );
+            }
+            UserAction::Bot { user } => {
+                let user = leppunen::API::user(&user).await?;
+                if user.verified_bot {
+                    println!(
+                        "{} {}",
+                        user.display_name_colored().bold(),
+                        "is a verified bot".bold().green()
+                    );
+                } else {
+                    println!(
+                        "{} {}",
+                        user.display_name_colored().bold(),
+                        "is not a bot".bold().red()
+                    );
+                }
+            }
+            UserAction::Cd { user } => {
+                let user = leppunen::API::user(&user).await?;
+                // TODO: time since account creation
+                println!(
+                    "{} {} {}",
+                    user.display_name_colored().bold(),
+                    "was created on".bold(),
+                    user.created_at
+                        .date()
+                        .naive_utc()
+                        .to_string()
+                        .bold()
+                        .green()
+                );
+            }
+            UserAction::Ep { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!(
+                    "{}{} {}",
+                    user.display_name_colored().bold(),
+                    "'s emote prefix:".bold(),
+                    user.emote_prefix.bold()
+                );
+            }
+            UserAction::Roles { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!("{}", "Roles:".bold());
+                for role in user.roles.get_active() {
+                    println!("{} {}", "-".bold(), role.bold().green());
+                }
+            }
+            UserAction::Badges { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!("{}", "Badges:".bold());
+                for badge in user.badges.iter() {
+                    println!("{} {}", "-".bold(), badge.color().bold());
+                }
+            }
+            UserAction::Cs { user } => {
+                let user = leppunen::API::user(&user).await?;
+                print!(
+                    "{}{}\n{}",
+                    user.display_name_colored().bold(),
+                    "'s chat settings:".bold(),
+                    user.chat_settings
+                );
+            }
+            UserAction::Dt { user } => {
+                let user = leppunen::API::user(&user).await?;
+                println!(
+                    "{} {} {}",
+                    user.display_name_colored().bold(),
+                    "has been offline for".bold(),
+                    user.last_broadcast.time_since().bold()
+                );
+            }
+        },
         Action::Logs { user, channel } => {
             let url = format!("https://logs.ivr.fi/?channel={channel}&username={user}");
             webbrowser::open(&url)?;
