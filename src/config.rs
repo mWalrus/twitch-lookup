@@ -1,8 +1,6 @@
 use anyhow::Result;
-use confy;
 use dialoguer::{theme::ColorfulTheme, Input};
 use serde::{Deserialize, Serialize};
-use webbrowser;
 
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
 pub struct Config {
@@ -20,7 +18,7 @@ impl Config {
                 .with_prompt("Paste your credentials here")
                 .interact()
                 .unwrap();
-            let mut split = response.split(';').into_iter();
+            let mut split = response.split(';');
             let access_token = split.next_back().unwrap().to_owned();
             let client_id = split.next_back().unwrap().to_owned();
             let cfg = Self {

@@ -35,6 +35,6 @@ pub fn hex_to_rgb(mut hex: &str) -> (u8, u8, u8) {
     let hex = u32::from_str_radix(hex, 16).unwrap();
     let r: u8 = (hex >> 16u8 & 0xFF) as u8;
     let g: u8 = (hex >> 8u8 & 0xFF) as u8;
-    let b: u8 = hex as u8 & 0xFF;
+    let b: u8 = hex as u8;
     (r, g, b)
 }

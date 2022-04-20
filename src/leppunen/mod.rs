@@ -1,13 +1,13 @@
 pub mod user;
 
 use anyhow::anyhow;
-use anyhow::{Error, Result};
+use anyhow::Result;
 use reqwest::get;
 use user::User;
 
-pub struct API;
+pub struct Api;
 
-impl API {
+impl Api {
     pub async fn user(login: &str) -> Result<User> {
         if login.len() < 3 || login.len() > 25 {
             return Err(anyhow!("Invalid username"));

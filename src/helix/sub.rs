@@ -21,6 +21,8 @@ impl Sub {
         self.tier.parse::<u16>().unwrap() / 1000
     }
     pub fn gifter(&self) -> String {
-        self.gifter.clone().unwrap_or(String::from("No one"))
+        self.gifter
+            .clone()
+            .unwrap_or_else(|| String::from("No one"))
     }
 }

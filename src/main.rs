@@ -91,15 +91,15 @@ async fn main() -> Result<()> {
         }
         Action::User(user_action) => match user_action {
             UserAction::Compact { user } => {
-                let user: Box<dyn CompactUser> = Box::new(leppunen::API::user(&user).await?);
+                let user: Box<dyn CompactUser> = Box::new(leppunen::Api::user(&user).await?);
                 user.print()?;
             }
             UserAction::Verbose { user } => {
-                let user: Box<dyn VerboseUser> = Box::new(leppunen::API::user(&user).await?);
+                let user: Box<dyn VerboseUser> = Box::new(leppunen::Api::user(&user).await?);
                 user.print()?;
             }
             UserAction::Uid { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{}{} {}",
                     user.display_name_colored().bold(),
@@ -108,7 +108,7 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Bc { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 if user.banned {
                     println!(
                         "{} {}",
@@ -124,11 +124,11 @@ async fn main() -> Result<()> {
                 }
             }
             UserAction::Dn { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!("{}", user.display_name_colored().bold());
             }
             UserAction::Uf { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{} {} {} {}",
                     user.display_name_colored().bold(),
@@ -138,7 +138,7 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Fu { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{} {} {} {}",
                     user.display_name_colored().bold(),
@@ -148,7 +148,7 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Cv { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{} {} {} {}",
                     user.display_name_colored().bold(),
@@ -158,11 +158,11 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Cc { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!("{}", user.chat_color().bold());
             }
             UserAction::Pfp { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{}{} {}",
                     user.display_name_colored().bold(),
@@ -171,7 +171,7 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Bot { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 if user.verified_bot {
                     println!(
                         "{} {}",
@@ -187,7 +187,7 @@ async fn main() -> Result<()> {
                 }
             }
             UserAction::Cd { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 // TODO: time since account creation
                 println!(
                     "{} {} {}",
@@ -202,7 +202,7 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Ep { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{}{} {}",
                     user.display_name_colored().bold(),
@@ -211,21 +211,21 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Roles { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!("{}", "Roles:".bold());
                 for role in user.roles.get_active() {
                     println!("{} {}", "-".bold(), role.bold().green());
                 }
             }
             UserAction::Badges { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!("{}", "Badges:".bold());
                 for badge in user.badges.iter() {
                     println!("{} {}", "-".bold(), badge.color().bold());
                 }
             }
             UserAction::Cs { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 print!(
                     "{}{}\n{}",
                     user.display_name_colored().bold(),
@@ -234,7 +234,7 @@ async fn main() -> Result<()> {
                 );
             }
             UserAction::Dt { user } => {
-                let user = leppunen::API::user(&user).await?;
+                let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{} {} {}",
                     user.display_name_colored().bold(),

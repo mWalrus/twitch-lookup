@@ -40,7 +40,7 @@ impl Chat {
 impl Chatters {
     pub fn broadcaster(&self) -> &str {
         if self.broadcaster.is_empty() {
-            return "";
+            ""
         } else {
             &self.broadcaster[0]
         }
