@@ -1,7 +1,7 @@
 # FEATURES
 - [x] SupiBot command detail link
 - [x] ban check (user available)
-- [ ] bot check
+- [x] bot check
 - [x] user information
   - [x] broadcaster type check (affiliate/partner)
   - [x] uid
@@ -21,12 +21,12 @@
 - [x] Vods
 - [x] Title
 - [x] Followage
-- [ ] Following
+- [x] Following
 - [x] Is live
 - [x] Sub status
 
 # Changes
 - [ ] Store user login name and use as default for commands like `fa` and `subbed`
-- [ ] Improve user subcommand using leppunen's API
+- [x] Improve user subcommand using leppunen's API
   - [x] Implement leppunen API call
-  - [ ] Implement the new subcommand structure in clap
+  - [x] Implement the new subcommand structure in clap
