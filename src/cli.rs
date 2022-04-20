@@ -94,4 +94,6 @@ pub enum UserAction {
     Cs { user: String }, // chat settings
     #[clap(about = "Downtime")]
     Dt { user: String }, // downtime
+    #[clap(about = "Twitch URL")]
+    Link { user: String },
 }

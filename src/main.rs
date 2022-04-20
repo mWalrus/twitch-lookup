@@ -242,6 +242,10 @@ async fn main() -> Result<()> {
                     user.last_broadcast.time_since().bold()
                 );
             }
+            UserAction::Link { user } => {
+                let url = format!("https://twitch.tv/{user}");
+                println!("{}", url.bold().blue());
+            }
         },
         Action::Logs { user, channel } => {
             let url = format!("https://logs.ivr.fi/?channel={channel}&username={user}");
