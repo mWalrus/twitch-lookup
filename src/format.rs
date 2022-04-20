@@ -32,9 +32,9 @@ pub fn duration_to_hms(d: Duration) -> String {
 
 pub fn hex_to_rgb(mut hex: &str) -> (u8, u8, u8) {
     hex = hex.trim_start_matches('#');
-    let hex = i64::from_str_radix(hex, 16).unwrap();
-    let r: u8 = ((hex as u32 >> 16u8) & 0xFF) as u8;
-    let g: u8 = ((hex as u32 >> 8u8) & 0xFF) as u8;
-    let b: u8 = (hex as u8) & 0xFF;
+    let hex = u32::from_str_radix(hex, 16).unwrap();
+    let r: u8 = (hex >> 16u8 & 0xFF) as u8;
+    let g: u8 = (hex >> 8u8 & 0xFF) as u8;
+    let b: u8 = hex as u8 & 0xFF;
     (r, g, b)
 }

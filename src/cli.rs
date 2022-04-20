@@ -7,11 +7,6 @@ pub struct Args {
     pub action: Action,
 }
 
-// FIXME: overhaul this subcommand
-//        each field should be converted to subcommands.
-//        example: `tl user m0xyy roles -p` to check if m0xyy is partner
-//        example: `tl user m0xyy bc` to ban check m0xyy
-//        u get the idea.
 #[non_exhaustive]
 #[derive(Subcommand, Debug)]
 pub enum Action {
