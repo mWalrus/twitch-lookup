@@ -20,7 +20,7 @@ pub trait VerboseUser {
 pub struct User {
     pub banned: bool,
     pub display_name: String,
-    pub bio: String,
+    pub bio: Option<String>,
     pub follows: u16,
     pub followers: u32,
     #[serde(rename(deserialize = "profileViewCount"))]
@@ -160,7 +160,11 @@ impl VerboseUser for User {
             "'s profile information:".bold()
         );
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
-        println!("{} {}", "- Bio:".bold(), self.bio.bold());
+        println!(
+            "{} {}",
+            "- Bio:".bold(),
+            self.bio.clone().unwrap_or("".to_string()).bold()
+        );
         println!("{} {}", "- Follows:".bold(), follows.bold().magenta());
         println!("{} {}", "- Followers:".bold(), followers.bold().magenta());
         println!(
