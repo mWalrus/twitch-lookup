@@ -3,6 +3,10 @@ name = "twitch-lookup"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "tl"
+path = "src/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 # Comments down below are dependency justifications
