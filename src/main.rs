@@ -98,15 +98,6 @@ async fn main() -> Result<()> {
                 let user: Box<dyn VerboseUser> = Box::new(leppunen::Api::user(&user).await?);
                 user.print()?;
             }
-            UserAction::Uid { user } => {
-                let user = leppunen::Api::user(&user).await?;
-                println!(
-                    "{}{} {}",
-                    user.display_name_colored().bold(),
-                    "'s user id:".bold(),
-                    user.uid().to_string().bold().magenta()
-                );
-            }
             UserAction::Bc { user } => {
                 let user = leppunen::Api::user(&user).await?;
                 if user.banned {
@@ -242,21 +233,40 @@ async fn main() -> Result<()> {
                     user.last_broadcast.time_since().bold()
                 );
             }
+            UserAction::Uid { user } => {
+                let user = leppunen::Api::user(&user).await?;
+                println!(
+                    "{}{} {}",
+                    user.display_name_colored().bold(),
+                    "'s user ID is:".bold(),
+                    user.uid().to_string().bold().magenta()
+                );
+            }
             UserAction::Link { user } => {
                 let url = format!("https://twitch.tv/{user}");
                 println!("{}", url.bold().blue());
             }
         },
         Action::Logs { user, channel } => {
-            let url = format!("https://logs.ivr.fi/?channel={channel}&username={user}");
+            let url = if let Some(channel) = channel {
+                format!("https://logs.ivr.fi/?channel={channel}&username={user}")
+            } else {
+                let login = config.login();
+                format!("https://logs.ivr.fi/?channel={user}&username={login}")
+            };
             webbrowser::open(&url)?;
         }
         Action::Fa { user, channel } => {
-            let fa = decapi::follow_age(&user, &channel).await?;
+            let (user, target) = if let Some(c) = channel {
+                (user, c)
+            } else {
+                (config.login().to_string(), user)
+            };
+            let fa = decapi::follow_age(&user, &target).await?;
             let output = format!(
                 "{} has followed {} for {}",
                 user.blue(),
-                channel.blue(),
+                target.blue(),
                 fa.green()
             );
             println!("{}", output.bold());
@@ -286,8 +296,14 @@ async fn main() -> Result<()> {
             }
         }
         Action::Subbed { user, channel } => {
+            // FIXME: use gql to be able to check other users
+            let (user, target) = if let Some(c) = channel {
+                (user, c)
+            } else {
+                (config.login().to_string(), user)
+            };
             let hx_cli = HelixClient::new(config);
-            let sub_status = hx_cli.subscription_status(&user, &channel).await?;
+            let sub_status = hx_cli.subscription_status(&user, &target).await?;
             println!("{}", sub_status.bold())
         }
         Action::Vods { channel, amount } => {

@@ -45,13 +45,22 @@ pub enum Action {
     #[clap(about = "Open up a given bot command in your default browser")]
     Command { bot: String, cmd_name: String },
     #[clap(about = "Open up a given users logs in a given channel in your default browser")]
-    Logs { user: String, channel: String },
+    Logs {
+        user: String,
+        channel: Option<String>,
+    },
     #[clap(about = "Check how long a user has followed a given channel")]
-    Fa { user: String, channel: String },
+    Fa {
+        user: String,
+        channel: Option<String>,
+    },
     #[clap(about = "Get the stream title from a given channel")]
     Title { channel: String },
     #[clap(about = "Check your own subscription status to a given channel")]
-    Subbed { user: String, channel: String },
+    Subbed {
+        user: String,
+        channel: Option<String>,
+    },
     #[clap(about = "Get VOD(s) from a given channel")]
     Vods { channel: String, amount: Option<u8> },
     #[clap(about = "Get the current downtime for a given channel")]

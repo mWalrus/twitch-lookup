@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
 pub struct Config {
+    login: String,
     client_id: String,
     access_token: String,
 }
@@ -19,9 +20,11 @@ impl Config {
                 .interact()
                 .unwrap();
             let mut split = response.split(';');
+            let login = split.next().unwrap().to_owned();
             let access_token = split.next_back().unwrap().to_owned();
             let client_id = split.next_back().unwrap().to_owned();
             let cfg = Self {
+                login,
                 client_id,
                 access_token,
             };
@@ -30,6 +33,10 @@ impl Config {
         } else {
             Ok(cfg)
         }
+    }
+
+    pub fn login(&self) -> &str {
+        &self.login
     }
 
     pub fn client_id(&self) -> &str {
