@@ -114,14 +114,15 @@ impl CompactUser for User {
         let follows = format::readable_number(self.follows.into());
         let followers = format::readable_number(self.followers);
         let channel_views = format::readable_number(self.channel_views);
+
         println!(
             "{}{}",
             self.display_name_colored().bold(),
             "'s profile information:".bold()
         );
         println!(
-            "{} {}",
-            "- UID:".bold(),
+            "{}{}",
+            "- User ID:".bold(),
             self.uid.to_string().bold().magenta()
         );
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
@@ -170,15 +171,15 @@ impl VerboseUser for User {
             "'s profile information:".bold()
         );
         println!(
-            "{} {}",
-            "- UID:".bold(),
+            "{}{}",
+            "- User ID:".bold(),
             self.uid.to_string().bold().magenta()
         );
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
         println!(
             "{} {}",
             "- Bio:".bold(),
-            self.bio.clone().unwrap_or_else(|| "".to_string()).bold()
+            self.bio.clone().unwrap_or("".to_string()).bold()
         );
         println!("{} {}", "- Follows:".bold(), follows.bold().magenta());
         println!("{} {}", "- Followers:".bold(), followers.bold().magenta());

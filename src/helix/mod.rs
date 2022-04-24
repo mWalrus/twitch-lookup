@@ -34,8 +34,8 @@ impl HelixClient {
         //       gql might be the saviour here.
         // FIXME: doesnt seem to work with other users than myself
         //        check back here for info: https://dev.twitch.tv/docs/api/reference#get-broadcaster-subscriptions
-        let user_id = Api::user(user).await.unwrap().uid();
-        let channel_id = Api::user(channel).await.unwrap().uid();
+        let user_id = Api::user(user).await?.uid();
+        let channel_id = Api::user(channel).await?.uid();
         let res = self
             .client
             .get(format!(

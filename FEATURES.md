@@ -17,7 +17,7 @@
   - [x] total chatter count
   - [x] is user in chat
 - [x] Logs
-- [ ] Downtime (https://api.ivr.fi/v2/twitch/user/69012069?id=true)
+- [x] Downtime (https://api.ivr.fi/v2/twitch/user/69012069?id=true)
 - [x] Vods
 - [x] Title
 - [x] Followage
