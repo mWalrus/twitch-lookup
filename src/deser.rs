@@ -42,7 +42,7 @@ where
     D: Deserializer<'de>,
 {
     let status: String = Deserialize::deserialize(data).unwrap_or_else(|_| String::from("offline"));
-    if status == "offline" {
+    if status != "live" {
         return Ok(false);
     }
     Ok(true)
