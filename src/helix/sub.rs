@@ -1,11 +1,6 @@
 use serde::{self, Deserialize};
 
-#[derive(Deserialize)]
-pub struct SubData {
-    pub data: Vec<Sub>,
-}
-
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Sub {
     is_gift: bool,
     tier: String,

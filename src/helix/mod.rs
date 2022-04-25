@@ -1,15 +1,48 @@
+pub mod channel;
 pub mod sub;
 pub mod vod;
 
 use crate::leppunen::Api;
 use crate::Config;
 use anyhow::Result;
+use channel::Channel;
 use reqwest::{header, Client};
-use sub::SubData;
-use vod::VodData;
+use serde::Deserialize;
+use sub::Sub;
+use vod::Vod;
 
 pub struct HelixClient {
     client: Client,
+}
+
+#[derive(Deserialize)]
+pub struct HelixData<T> {
+    data: Vec<T>,
+    pagination: Pagination,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct Pagination {
+    cursor: Option<String>,
+}
+
+impl Pagination {
+    pub fn cursor(&self) -> Option<String> {
+        self.cursor.clone()
+    }
+}
+
+impl<T> HelixData<T>
+where
+    T: Clone,
+{
+    pub fn get_first(&self) -> &T {
+        &self.data[0]
+    }
+
+    pub fn items(&self) -> Vec<T> {
+        self.data.clone()
+    }
 }
 
 impl HelixClient {
@@ -45,8 +78,8 @@ impl HelixClient {
             .send()
             .await?;
 
-        if let Ok(sub_data) = res.json::<SubData>().await {
-            let sub = &sub_data.data[0];
+        if let Ok(data) = res.json::<HelixData<Sub>>().await {
+            let sub = data.get_first();
             if sub.is_gift() {
                 return Ok(format!(
                     "{user} is subscribed to {channel} with a Tier {} gifted sub from {}",
@@ -63,7 +96,7 @@ impl HelixClient {
             return Ok(format!("{user} is not subscribed to {channel}"));
         }
     }
-    pub async fn get_vods(&self, channel: &str, amount: Option<u8>) -> Option<VodData> {
+    pub async fn get_vods(&self, channel: &str, amount: Option<u8>) -> Option<Vec<Vod>> {
         let user_id = Api::user(channel).await.unwrap().uid();
         let res = self
             .client
@@ -74,9 +107,47 @@ impl HelixClient {
             .send()
             .await
             .unwrap()
-            .json::<VodData>()
+            .json::<HelixData<Vod>>()
             .await
             .unwrap();
-        Some(res)
+        Some(res.items())
+    }
+
+    pub async fn get_live_followed_channels(&self, user_id: u32) -> Option<Vec<Channel>> {
+        let url = format!("https://api.twitch.tv/helix/streams/followed?user_id={user_id}");
+        let res = self
+            .client
+            .get(url.clone())
+            .send()
+            .await
+            .unwrap()
+            .json::<HelixData<Channel>>()
+            .await
+            .unwrap();
+        // TODO: pagination
+        let mut items = res.items();
+        if let Some(c) = res.pagination.cursor() {
+            let mut new_url = url + &format!("after={c}");
+            loop {
+                let res = self
+                    .client
+                    .get(new_url.clone())
+                    .send()
+                    .await
+                    .unwrap()
+                    .json::<HelixData<Channel>>()
+                    .await
+                    .unwrap();
+                items.append(&mut res.items());
+                if let Some(new_c) = res.pagination.cursor() {
+                    new_url = format!(
+                        "https://api.twitch.tv/helix/streams/followed?user_id={user_id}&after={new_c}",
+                    );
+                } else {
+                    break;
+                }
+            }
+        }
+        Some(res.items())
     }
 }

@@ -65,6 +65,8 @@ pub enum Action {
     Vods { channel: String, amount: Option<u8> },
     #[clap(about = "Get the current downtime for a given channel")]
     Dt { channel: String },
+    #[clap(about = "Get streams from your follow directory")]
+    Ll,
 }
 
 #[derive(Subcommand, Debug)]

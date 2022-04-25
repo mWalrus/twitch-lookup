@@ -3,13 +3,7 @@ use colored::Colorize;
 use serde::Deserialize;
 use std::fmt;
 
-// TODO: https://dev.twitch.tv/docs/api/reference#get-videos
-#[derive(Deserialize, Debug)]
-pub struct VodData {
-    pub data: Vec<Vod>,
-}
-
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Vod {
     title: String,
     url: String,

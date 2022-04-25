@@ -1,6 +1,7 @@
 mod cli;
 mod config;
 mod decapi;
+mod deser;
 mod format;
 mod gql;
 mod helix;
@@ -310,9 +311,21 @@ async fn main() -> Result<()> {
             let client = HelixClient::new(config);
             let vods = client.get_vods(&channel, amount).await;
             if let Some(vods) = vods {
-                for (i, vod) in vods.data.iter().enumerate() {
+                for (i, vod) in vods.iter().enumerate() {
                     println!("{} {}\n{vod}", "Vod".bold(), (i + 1).to_string().bold());
                 }
+            }
+        }
+        Action::Ll => {
+            let user_id = config.user_id();
+            let client = HelixClient::new(config);
+            let mut channels = client
+                .get_live_followed_channels(user_id)
+                .await
+                .unwrap_or_default();
+            channels.reverse();
+            for channel in channels {
+                println!("{channel}");
             }
         }
         _ => {}
