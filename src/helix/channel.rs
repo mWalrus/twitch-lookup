@@ -27,11 +27,13 @@ impl fmt::Display for Channel {
         let uptime = Utc::now().signed_duration_since(self.started_at);
         if self.live {
             let out = format!(
-                "► {} is live playing {} to {} viewers:\n{} {}\n{} {}{}",
+                "► {} is live playing {} to {} viewers:\n{} {}\n{} {}\n{} {}{}",
                 self.user_name,
                 self.game_name,
                 self.viewer_count.to_string().magenta(),
-                "- Uptime:".white(),
+                "- Title:".white(),
+                self.title.white(),
+                "- Uptime:".green(),
                 duration_to_hms(uptime).white(),
                 "- URL:".white(),
                 "https://twitch.tv/".blue(),
