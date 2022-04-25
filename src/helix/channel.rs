@@ -33,8 +33,8 @@ impl fmt::Display for Channel {
                 self.viewer_count.to_string().magenta(),
                 "- Title:".white(),
                 self.title.white(),
-                "- Uptime:".green(),
-                duration_to_hms(uptime).white(),
+                "- Uptime:".white(),
+                duration_to_hms(uptime).green(),
                 "- URL:".white(),
                 "https://twitch.tv/".blue(),
                 self.user_login.blue()
