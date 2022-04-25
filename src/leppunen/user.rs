@@ -1,11 +1,11 @@
+use crate::deser::*;
 use crate::format;
 use anyhow::Result;
 use chrono::{DateTime, Duration, Utc};
 use colored::Colorize;
-use serde::de::{self, Deserializer};
+use serde::de::Deserializer;
 use serde::Deserialize;
 use std::fmt::Display;
-use std::str::FromStr;
 
 pub trait CompactUser {
     fn print(&self) -> Result<()>;
@@ -18,6 +18,7 @@ pub trait VerboseUser {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
+    // FIXME: UID should not be deserialized into u32 since it can have leading zeroes.
     #[serde(rename(deserialize = "id"), deserialize_with = "deserialize_uid")]
     pub uid: u32,
     pub banned: bool,
@@ -320,40 +321,6 @@ fn yes_no(b: bool) -> String {
     } else {
         "no".bold().red().to_string()
     }
-}
-
-fn deserialize_millis<'de, D>(data: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let millis: i64 = Deserialize::deserialize(data).unwrap_or(0);
-    Ok(Duration::milliseconds(millis))
-}
-
-fn deserialize_seconds<'de, D>(data: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let seconds: i64 = Deserialize::deserialize(data).unwrap_or(0);
-    Ok(Duration::seconds(seconds))
-}
-
-fn deserialize_minutes<'de, D>(data: D) -> Result<Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let minutes: i64 = Deserialize::deserialize(data).unwrap_or(0);
-    Ok(Duration::minutes(minutes))
-}
-
-fn deserialize_date_time<'de, D, S>(data: D) -> Result<S, D::Error>
-where
-    D: Deserializer<'de>,
-    S: FromStr,
-    S::Err: Display,
-{
-    let s: String = Deserialize::deserialize(data)?;
-    S::from_str(&s).map_err(de::Error::custom)
 }
 
 fn deserialize_uid<'de, D>(data: D) -> Result<u32, D::Error>
