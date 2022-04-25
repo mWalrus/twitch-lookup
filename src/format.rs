@@ -12,7 +12,6 @@ pub fn readable_number(num: u32) -> String {
     readable_num
 }
 
-// TODO: add days to output if needed.
 pub fn duration_to_hms(d: Duration) -> String {
     let mut result = String::new();
     if d.num_days() > 0 {

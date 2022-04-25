@@ -5,7 +5,6 @@ use colored::Colorize;
 use serde::Deserialize;
 use std::fmt;
 
-// TODO: impl
 #[derive(Deserialize, Debug, Clone)]
 pub struct Channel {
     user_name: String,

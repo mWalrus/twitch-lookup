@@ -26,7 +26,7 @@
 - [x] Sub status
 
 # Changes
-- [ ] Store user login name and use as default for commands like `fa` and `subbed`
+- [x] Store user login name and use as default for commands like `fa` and `subbed`
 - [x] Improve user subcommand using leppunen's API
   - [x] Implement leppunen API call
   - [x] Implement the new subcommand structure in clap

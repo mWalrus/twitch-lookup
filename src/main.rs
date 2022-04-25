@@ -17,9 +17,6 @@ use helix::HelixClient;
 use leppunen::user::{CompactUser, VerboseUser};
 use tmi::Chat;
 
-// NOTE: https://gist.github.com/Chronophylos/512675897009f26472dd3cfc6b6744cb
-//       https://github.com/Supinic/supibot-package-manager/blob/master/commands/subage/index.js
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let config = Config::read()?;

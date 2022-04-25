@@ -63,10 +63,7 @@ impl HelixClient {
     }
 
     pub async fn subscription_status(&self, user: &str, channel: &str) -> Result<String> {
-        // NOTE: if understood correctly, sub information about another user other than myself can only be acquired if that user has authenticated my application...
-        //       gql might be the saviour here.
-        // FIXME: doesnt seem to work with other users than myself
-        //        check back here for info: https://dev.twitch.tv/docs/api/reference#get-broadcaster-subscriptions
+        // NOTE: gql
         let user_id = Api::user(user).await?.uid();
         let channel_id = Api::user(channel).await?.uid();
         let res = self

@@ -180,7 +180,7 @@ impl VerboseUser for User {
         println!(
             "{} {}",
             "- Bio:".bold(),
-            self.bio.clone().unwrap_or("".to_string()).bold()
+            self.bio.clone().unwrap_or_default().bold()
         );
         println!("{} {}", "- Follows:".bold(), follows.bold().magenta());
         println!("{} {}", "- Followers:".bold(), followers.bold().magenta());

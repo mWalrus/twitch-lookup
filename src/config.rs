@@ -12,7 +12,6 @@ pub struct Config {
 
 impl Config {
     pub fn read() -> Result<Self> {
-        // FIXME: fires twice if config needs to be constructed
         let cfg = confy::load::<Config>("twitch-lookup")?;
         if cfg == Config::default() {
             webbrowser::open("https://rusterino.waalrus.xyz/login").unwrap();
