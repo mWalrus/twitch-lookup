@@ -261,12 +261,21 @@ async fn main() -> Result<()> {
                 (config.login().to_string(), user)
             };
             let fa = decapi::follow_age(&user, &target).await?;
-            let output = format!(
-                "{} has followed {} for {}",
-                user.blue(),
-                target.blue(),
-                fa.green()
-            );
+            let output = if fa.contains("does not follow") {
+                format!(
+                    "{} does {} follow {}",
+                    user.blue(),
+                    "not".red(),
+                    target.blue()
+                )
+            } else {
+                format!(
+                    "{} has followed {} for {}",
+                    user.blue(),
+                    target.blue(),
+                    fa.green()
+                )
+            };
             println!("{}", output.bold());
         }
         Action::Title { channel } => {
