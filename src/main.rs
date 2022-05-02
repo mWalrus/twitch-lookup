@@ -10,7 +10,7 @@ mod tmi;
 
 use anyhow::Result;
 use clap::Parser;
-use cli::{Action, Args, UserAction};
+use cli::{Action, Args, ChatAction, UserAction};
 use colored::Colorize;
 use config::Config;
 use helix::HelixClient;
@@ -23,63 +23,99 @@ async fn main() -> Result<()> {
     let args = Args::parse();
 
     match args.action {
-        Action::Chat {
-            channel,
-            broadcaster,
-            mods,
-            vips,
-            count,
-            regular,
-            present,
-        } => {
-            let chat = Chat::fetch(&channel).await?;
-            if count {
-                println!("{} {}", "Chatter count:".bold(), chat.chatter_count());
-                return Ok(());
-            }
-
-            let chatters = chat.chatters();
-
-            if let Some(user) = present {
-                if chatters.is_present(user) {
-                    println!("{}", "That user is in chat".bold().bright_green());
-                } else {
-                    println!("{}", "That user is not in chat".bold().bright_red());
+        Action::Chat(chat_action) => match chat_action {
+            ChatAction::Streamer { channel } => {
+                let chat = Chat::fetch(&channel).await?;
+                if chat.chatters().broadcaster().is_empty() {
+                    println!(
+                        "{} {}",
+                        &channel.bold().red(),
+                        "is not in chat".bold().red()
+                    );
+                    return Ok(());
                 }
-                return Ok(());
-            }
-
-            if broadcaster {
-                let message = if chatters.broadcaster().is_empty() {
-                    "Broadcaster is not in chat".bold().bright_red()
-                } else {
-                    "Broadcaster is in chat".bold().bright_green()
-                };
-
-                println!("{message}");
-                return Ok(());
-            }
-
-            let items = if mods {
-                chatters.moderators()
-            } else if vips {
-                chatters.vips()
-            } else if regular {
-                chatters.viewers()
-            } else {
-                unreachable!()
-            };
-
-            for (i, item) in items.iter().enumerate() {
-                let out = format!(
-                    "{}{}\t{}",
-                    (i + 1).to_string().bold().blue(),
-                    ".".bold().blue(),
-                    item.bold()
+                println!(
+                    "{} {}",
+                    &channel.bold().bright_green(),
+                    "is in chat".bold().bright_green()
                 );
-                println!("{out}");
             }
-        }
+            ChatAction::Mods { channel } => {
+                let chat = Chat::fetch(&channel).await?;
+                let mods = chat.chatters().moderators();
+                println!(
+                    "{} {}{}",
+                    "Moderators in".bold(),
+                    &channel.bold(),
+                    ":".bold()
+                );
+                for (i, moderator) in mods.iter().enumerate() {
+                    println!(
+                        "{} {}",
+                        (i + 1).to_string().bold().magenta(),
+                        moderator.bold()
+                    );
+                }
+            }
+            ChatAction::Vips { channel } => {
+                let chat = Chat::fetch(&channel).await?;
+                let vips = chat.chatters().vips();
+                println!("{} {}{}", "VIPs in".bold(), &channel.bold(), ":".bold());
+                for (i, vip) in vips.iter().enumerate() {
+                    println!("{} {}", (i + 1).to_string().bold().magenta(), &vip.bold());
+                }
+            }
+            ChatAction::Normals { channel } => {
+                let chat = Chat::fetch(&channel).await?;
+                let normals = chat.chatters().viewers();
+                println!(
+                    "{} {}{}",
+                    "Normal chatters in".bold(),
+                    &channel.bold(),
+                    ":".bold()
+                );
+                for (i, normal) in normals.iter().enumerate() {
+                    println!(
+                        "{} {}",
+                        (i + 1).to_string().bold().magenta(),
+                        &normal.bold()
+                    );
+                }
+            }
+            ChatAction::Count { channel } => {
+                let chat = Chat::fetch(&channel).await?;
+                let count = chat.chatter_count();
+                println!(
+                    "{} {} {} {}",
+                    "There are currently".bold(),
+                    count.to_string().bold().magenta(),
+                    "chatters in".bold(),
+                    &channel.bold()
+                );
+            }
+            ChatAction::Present { user, channel } => {
+                let chat = Chat::fetch(&channel).await?;
+                if chat.chatters().is_present(&user) {
+                    println!(
+                        "{} {} {}{}",
+                        &user.bold(),
+                        "is currently present in".bold(),
+                        &channel.bold(),
+                        "'s chat".bold()
+                    );
+                    return Ok(());
+                }
+                println!(
+                    "{} {} {} {} {}{}",
+                    &user.bold(),
+                    "is".bold(),
+                    "not".bold().red(),
+                    "currently in".bold(),
+                    &channel.bold(),
+                    "'s chat".bold()
+                );
+            }
+        },
         Action::Command { bot, cmd_name } => {
             if bot == "supi" || bot == "supibot" {
                 let uri = format!("https://supinic.com/bot/command/detail/{cmd_name}");
@@ -334,7 +370,6 @@ async fn main() -> Result<()> {
                 println!("{channel}");
             }
         }
-        _ => {}
     }
     Ok(())
 }

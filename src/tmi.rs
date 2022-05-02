@@ -58,24 +58,24 @@ impl Chatters {
         &self.viewers
     }
 
-    pub fn is_present(&self, user: String) -> bool {
+    pub fn is_present(&self, user: &str) -> bool {
         for moderator in &self.moderators {
-            if moderator == &user {
+            if moderator == user {
                 return true;
             }
         }
         for vip in &self.vips {
-            if vip == &user {
+            if vip == user {
                 return true;
             }
         }
         for viewer in &self.viewers {
-            if viewer == &user {
+            if viewer == user {
                 return true;
             }
         }
         if let Some(br) = self.broadcaster.first() {
-            return br == &user;
+            return br == user;
         }
         false
     }
