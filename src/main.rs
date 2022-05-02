@@ -282,13 +282,32 @@ async fn main() -> Result<()> {
             }
         },
         Action::Logs { user, channel } => {
-            let url = if let Some(channel) = channel {
-                format!("https://logs.ivr.fi/?channel={channel}&username={user}")
+            if let Some(channel) = channel {
+                if leppunen::Api::is_valid_logs_query(&user, &channel).await {
+                    let url = format!("https://logs.ivr.fi/?channel={channel}&username={user}");
+                    webbrowser::open(&url)?;
+                } else {
+                    println!(
+                        "{} {} {}",
+                        "That user or channel could".bold(),
+                        "not".bold().red(),
+                        "be found".bold()
+                    );
+                }
             } else {
                 let login = config.login();
-                format!("https://logs.ivr.fi/?channel={user}&username={login}")
+                if leppunen::Api::is_valid_logs_query(&login, &user).await {
+                    let url = format!("https://logs.ivr.fi/?channel={user}&username={login}");
+                    webbrowser::open(&url)?;
+                } else {
+                    println!(
+                        "{} {} {}",
+                        "That user or channel could".bold(),
+                        "not".bold().red(),
+                        "be found".bold()
+                    );
+                }
             };
-            webbrowser::open(&url)?;
         }
         Action::Fa { user, channel } => {
             let (user, target) = if let Some(c) = channel {
