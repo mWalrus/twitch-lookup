@@ -12,6 +12,7 @@ This tool performs many of the same tasks as bots do in different channels. The 
 1. Clone repository: `git clone https://gitlab.com/mWalrus/twitch-lookup.git`
 2. Enter directory: `cd twitch-lookup`
 3. Make: `cargo make install`
+
 A new binary called `tl` will be built and installed on your system.
 
 # Help
