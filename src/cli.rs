@@ -48,7 +48,7 @@ pub enum UserAction {
     #[clap(about = "Verbose list of user information")]
     Verbose { user: String }, // verbose information
     #[clap(about = "User ID")]
-    Uid { user: String },
+    Id { user: String },
     #[clap(about = "Ban check")]
     Bc { user: String }, // ban check
     #[clap(about = "Display name")]

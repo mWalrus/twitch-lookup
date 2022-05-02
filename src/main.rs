@@ -267,7 +267,7 @@ async fn main() -> Result<()> {
                     user.last_broadcast.time_since().bold()
                 );
             }
-            UserAction::Uid { user } => {
+            UserAction::Id { user } => {
                 let user = leppunen::Api::user(&user).await?;
                 println!(
                     "{}{} {}",
