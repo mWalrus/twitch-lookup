@@ -3,7 +3,6 @@ use crate::format;
 use anyhow::Result;
 use chrono::{DateTime, Duration, Utc};
 use colored::Colorize;
-use serde::de::Deserializer;
 use serde::Deserialize;
 use std::fmt::Display;
 
@@ -120,7 +119,7 @@ impl CompactUser for User {
             self.display_name_colored().bold(),
             "'s profile information:".bold()
         );
-        println!("{}{}", "- User ID:".bold(), self.uid.bold().magenta());
+        println!("{} {}", "- User ID:".bold(), self.uid.bold().magenta());
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
         println!(
             "{} {}",
@@ -166,7 +165,7 @@ impl VerboseUser for User {
             self.display_name_colored().bold(),
             "'s profile information:".bold()
         );
-        println!("{}{}", "- User ID:".bold(), self.uid.bold().magenta());
+        println!("{} {}", "- User ID:".bold(), self.uid.bold().magenta());
         println!("{} {}", "- Banned:".bold(), yes_no(self.banned));
         println!(
             "{} {}",
