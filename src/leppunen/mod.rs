@@ -16,13 +16,9 @@ impl Api {
         let user: User = get(url).await?.json().await?;
         Ok(user)
     }
-    pub async fn is_valid_logs_query(channel: &str, user: &str) -> bool {
-        let status = get(format!(
-            "https://logs.ivr.fi/list?channel={channel}&user={user}"
-        ))
-        .await
-        .unwrap()
-        .status();
-        return status == StatusCode::OK;
+    pub async fn is_valid_logs_query(user: &str, channel: &str) -> bool {
+        let url = format!("https://logs.ivr.fi/list?channel={channel}&user={user}");
+        let status = get(&url).await.unwrap().status();
+        return status != StatusCode::NOT_FOUND;
     }
 }
