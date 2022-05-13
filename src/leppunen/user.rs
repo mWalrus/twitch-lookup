@@ -21,6 +21,7 @@ pub struct User {
     pub uid: String,
     pub banned: bool,
     pub display_name: String,
+    pub login: String,
     pub bio: Option<String>,
     pub follows: u16,
     pub followers: u32,

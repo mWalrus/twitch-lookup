@@ -24,6 +24,7 @@
 - [x] Following
 - [x] Is live
 - [x] Sub status
+- [x] Inform that user could not be found
 
 # Changes
 - [x] Store user login name and use as default for commands like `fa` and `subbed`

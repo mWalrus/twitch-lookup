@@ -13,8 +13,11 @@ impl Api {
             return Err(anyhow!("Invalid username"));
         }
         let url = format!("https://api.ivr.fi/v2/twitch/user/{login}");
-        let user: User = get(url).await?.json().await?;
-        Ok(user)
+        if let Ok(user) = get(url).await?.json().await {
+            Ok(user)
+        } else {
+            Err(anyhow!("That user could not be found"))
+        }
     }
     pub async fn is_valid_logs_query(user: &str, channel: &str) -> bool {
         let url = format!("https://logs.ivr.fi/list?channel={channel}&user={user}");
