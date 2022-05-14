@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
 pub struct Config {
     pub login: String,
-    pub user_id: u32,
+    pub user_id: String,
     pub client_id: String,
     pub access_token: String,
 }
@@ -18,7 +18,7 @@ impl Config {
             let response = prompt("Paste your credentials here");
             let mut split = response.split(';');
             let login = split.next().unwrap().to_owned();
-            let user_id = split.next().unwrap().to_owned().parse::<u32>().unwrap();
+            let user_id = split.next().unwrap().to_owned();
             let client_id = split.next().unwrap().to_owned();
             let access_token = split.next().unwrap().to_owned();
             let cfg = Self {

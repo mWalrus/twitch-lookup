@@ -1,14 +1,11 @@
 pub mod channel;
-pub mod sub;
 pub mod vod;
 
 use crate::leppunen::Api;
 use crate::Config;
-use anyhow::Result;
 use channel::Channel;
 use reqwest::{header, Client};
 use serde::Deserialize;
-use sub::Sub;
 use vod::Vod;
 
 pub struct HelixClient {
@@ -36,17 +33,13 @@ impl<T> HelixData<T>
 where
     T: Clone,
 {
-    pub fn get_first(&self) -> &T {
-        &self.data[0]
-    }
-
     pub fn items(&self) -> Vec<T> {
         self.data.clone()
     }
 }
 
 impl HelixClient {
-    pub fn new(config: Config) -> Self {
+    pub fn new(config: &Config) -> Self {
         let builder = Client::builder();
         let mut headers = header::HeaderMap::new();
 
@@ -62,37 +55,6 @@ impl HelixClient {
         Self { client }
     }
 
-    pub async fn subscription_status(&self, user: &str, channel: &str) -> Result<String> {
-        // NOTE: gql
-        let user_id = Api::user(user).await?.uid();
-        let channel_id = Api::user(channel).await?.uid();
-        let res = self
-            .client
-            .get(format!(
-                "https://api.twitch.tv/helix/subscriptions/user?broadcaster_id={}&user_id={}",
-                &channel_id, &user_id
-            ))
-            .send()
-            .await?;
-
-        if let Ok(data) = res.json::<HelixData<Sub>>().await {
-            let sub = data.get_first();
-            if sub.is_gift() {
-                return Ok(format!(
-                    "{user} is subscribed to {channel} with a Tier {} gifted sub from {}",
-                    sub.tier(),
-                    sub.gifter()
-                ));
-            } else {
-                return Ok(format!(
-                    "{user} is subscribed to {channel} with a Tier {} sub",
-                    sub.tier()
-                ));
-            }
-        } else {
-            return Ok(format!("{user} is not subscribed to {channel}"));
-        }
-    }
     pub async fn get_vods(&self, channel: &str, amount: Option<u8>) -> Option<Vec<Vod>> {
         let user_id = Api::user(channel).await.unwrap().uid();
         let res = self
@@ -110,7 +72,7 @@ impl HelixClient {
         Some(res.items())
     }
 
-    pub async fn get_live_followed_channels(&self, user_id: u32) -> Option<Vec<Channel>> {
+    pub async fn get_live_followed_channels(&self, user_id: &str) -> Option<Vec<Channel>> {
         let url = format!("https://api.twitch.tv/helix/streams/followed?user_id={user_id}");
         let res = self
             .client

@@ -357,7 +357,7 @@ async fn main() -> Result<()> {
             }
         }
         Action::Vods { channel, amount } => {
-            let client = HelixClient::new(config);
+            let client = HelixClient::new(&config);
             let vods = client.get_vods(&channel, amount).await;
             if let Some(vods) = vods {
                 for (i, vod) in vods.iter().enumerate() {
@@ -366,10 +366,9 @@ async fn main() -> Result<()> {
             }
         }
         Action::Ll => {
-            let user_id = config.user_id;
-            let client = HelixClient::new(config);
+            let client = HelixClient::new(&config);
             let mut channels = client
-                .get_live_followed_channels(user_id)
+                .get_live_followed_channels(&config.user_id)
                 .await
                 .unwrap_or_default();
             channels.reverse();
