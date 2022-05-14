@@ -3,7 +3,6 @@ mod config;
 mod decapi;
 mod deser;
 mod format;
-mod gql;
 mod helix;
 mod leppunen;
 mod tmi;
@@ -295,7 +294,7 @@ async fn main() -> Result<()> {
                     );
                 }
             } else {
-                let login = config.login();
+                let login = config.login;
                 if leppunen::Api::is_valid_logs_query(&login, &user).await {
                     let url = format!("https://logs.ivr.fi/?channel={user}&username={login}");
                     webbrowser::open(&url)?;
@@ -313,7 +312,7 @@ async fn main() -> Result<()> {
             let (user, target) = if let Some(c) = channel {
                 (user, c)
             } else {
-                (config.login().to_string(), user)
+                (config.login.to_string(), user)
             };
             let fa = decapi::follow_age(&user, &target).await?;
             let output = if fa.contains("does not follow") {
@@ -357,17 +356,6 @@ async fn main() -> Result<()> {
                 )
             }
         }
-        Action::Subbed { user, channel } => {
-            // FIXME: use gql to be able to check other users
-            let (user, target) = if let Some(c) = channel {
-                (user, c)
-            } else {
-                (config.login().to_string(), user)
-            };
-            let hx_cli = HelixClient::new(config);
-            let sub_status = hx_cli.subscription_status(&user, &target).await?;
-            println!("{}", sub_status.bold())
-        }
         Action::Vods { channel, amount } => {
             let client = HelixClient::new(config);
             let vods = client.get_vods(&channel, amount).await;
@@ -378,7 +366,7 @@ async fn main() -> Result<()> {
             }
         }
         Action::Ll => {
-            let user_id = config.user_id();
+            let user_id = config.user_id;
             let client = HelixClient::new(config);
             let mut channels = client
                 .get_live_followed_channels(user_id)
@@ -388,6 +376,9 @@ async fn main() -> Result<()> {
             for channel in channels {
                 println!("{channel}");
             }
+        }
+        Action::Emotes { user } => {
+            webbrowser::open(&format!("https://emotes.raccatta.cc/twitch/{user}"))?;
         }
     }
     Ok(())

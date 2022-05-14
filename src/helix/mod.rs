@@ -50,9 +50,9 @@ impl HelixClient {
         let builder = Client::builder();
         let mut headers = header::HeaderMap::new();
 
-        let bearer = format!("Bearer {}", config.access_token());
+        let bearer = format!("Bearer {}", config.access_token);
         let auth_value = header::HeaderValue::from_str(&bearer).unwrap();
-        let client_id_value = header::HeaderValue::from_str(config.client_id()).unwrap();
+        let client_id_value = header::HeaderValue::from_str(&config.client_id).unwrap();
 
         headers.insert(header::AUTHORIZATION, auth_value);
         headers.insert("Client-Id", client_id_value);

@@ -30,15 +30,12 @@ pub enum Action {
     },
     #[clap(about = "Get the stream title from a given channel")]
     Title { channel: String },
-    #[clap(about = "Check your own subscription status to a given channel")]
-    Subbed {
-        user: String,
-        channel: Option<String>,
-    },
     #[clap(about = "Get VOD(s) from a given channel")]
     Vods { channel: String, amount: Option<u8> },
     #[clap(about = "Get streams from your follow directory")]
     Ll,
+    #[clap(about = "emotes.raccatta.cc emote lookup for a user")]
+    Emotes { user: String },
 }
 
 #[derive(Subcommand, Debug)]

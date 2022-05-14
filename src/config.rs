@@ -4,10 +4,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
 pub struct Config {
-    login: String,
-    user_id: u32,
-    client_id: String,
-    access_token: String,
+    pub login: String,
+    pub user_id: u32,
+    pub client_id: String,
+    pub access_token: String,
 }
 
 impl Config {
@@ -15,10 +15,7 @@ impl Config {
         let cfg = confy::load::<Config>("twitch-lookup")?;
         if cfg == Config::default() {
             webbrowser::open("https://rusterino.waalrus.xyz/login").unwrap();
-            let response: String = Input::with_theme(&ColorfulTheme::default())
-                .with_prompt("Paste your credentials here")
-                .interact()
-                .unwrap();
+            let response = prompt("Paste your credentials here");
             let mut split = response.split(';');
             let login = split.next().unwrap().to_owned();
             let user_id = split.next().unwrap().to_owned().parse::<u32>().unwrap();
@@ -37,24 +34,15 @@ impl Config {
         }
     }
 
-    pub fn login(&self) -> &str {
-        &self.login
-    }
-
-    pub fn user_id(&self) -> u32 {
-        self.user_id
-    }
-
-    pub fn client_id(&self) -> &str {
-        &self.client_id
-    }
-
-    pub fn access_token(&self) -> &str {
-        &self.access_token
-    }
-
     pub fn _save(&self) -> Result<()> {
         confy::store("twitch-lookup", self).unwrap();
         Ok(())
     }
+}
+
+fn prompt(msg: &str) -> String {
+    Input::with_theme(&ColorfulTheme::default())
+        .with_prompt(msg)
+        .interact()
+        .unwrap()
 }
